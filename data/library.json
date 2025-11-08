@@ -1,5 +1,5 @@
 {
-  "exportDate": "2025-11-08T14:28:11.939Z",
+  "exportDate": "2025-11-08T14:43:00.581Z",
   "books": {
     "B009GXLRZY": {
       "title": "イザベラ・バードの日本紀行（上） (講談社学術文庫)",
@@ -1243,6 +1243,105 @@
       "addedDate": 1762608567644,
       "memo": "",
       "rating": 0
+    },
+    "9784991425400": {
+      "title": "サイバー攻撃　その瞬間　社長の決定",
+      "authors": "達城久裕",
+      "acquiredTime": 1762612509785,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784991425400.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762612509785,
+      "memo": "",
+      "rating": 0
+    },
+    "9784802512008": {
+      "title": "創るためのAI : 機械と創造性のはてしない物語",
+      "authors": "徳井直生",
+      "acquiredTime": 1762612565724,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784802512008.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762612565724,
+      "memo": "",
+      "rating": 0
+    },
+    "9784839977177": {
+      "title": "プロダクトマネジメントの教科書 : PMの仕事を極める-スキル、フレームワーク、プラクティス",
+      "authors": "Jackie Bavaro, Gayle Laakmann McDowel",
+      "acquiredTime": 1762612645050,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784839977177.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762612645050,
+      "memo": "",
+      "rating": 0
+    },
+    "9784814401352": {
+      "title": "エンジニアリングリーダー : 技術組織を育てるリーダーシップとセルフマネジメント",
+      "authors": "CateHuston, 岩瀬義昌, 岩瀬迪子",
+      "acquiredTime": 1762612681363,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784814401352.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762612681363,
+      "memo": "",
+      "rating": 0
+    },
+    "9784833451932": {
+      "title": "Project Management進化論 : クリティカルチェーン・プロジェクトマネジメント : 目的を達成するために、組織を動かし、\"時間的余裕\"を生み出す実践法とは?",
+      "authors": "後藤智博, 渡瀬智, 西郷智史",
+      "acquiredTime": 1762612748892,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784833451932.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762612748892,
+      "memo": "",
+      "rating": 0
+    },
+    "9784862804433": {
+      "title": "世界一わかりやすいプロジェクトマネジメント = IDIOT'S GUIDES AS EASY AS IT GETS!Project Management",
+      "authors": "G.Michael Campbell, 中嶋秀隆",
+      "acquiredTime": 1762612803112,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784862804433.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762612803112,
+      "memo": "",
+      "rating": 0
+    },
+    "9784791775910": {
+      "title": "なぜ私たちは燃え尽きてしまうのか : バーンアウト文化を終わらせるためにできること",
+      "authors": "Jonathan Malesic, 吉嶺英美",
+      "acquiredTime": 1762612845409,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784791775910.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762612845409,
+      "memo": "",
+      "rating": 0
+    },
+    "9784322132892": {
+      "title": "個人再生の実務Q&A120問",
+      "authors": "全国倒産処理弁護士ネットワーク",
+      "acquiredTime": 1762612918927,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784322132892.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762612918927,
+      "memo": "",
+      "rating": 0
+    },
+    "9784041013380": {
+      "title": "銀の匙",
+      "authors": "中勘助",
+      "acquiredTime": 1762612976457,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784041013380.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762612976457,
+      "memo": "",
+      "rating": 0
     }
   },
   "bookshelves": [],
@@ -1373,7 +1472,7 @@
     ]
   },
   "stats": {
-    "totalBooks": 113,
+    "totalBooks": 122,
     "notesCount": 0
   },
   "version": "2.0"
