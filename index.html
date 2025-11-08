@@ -139,7 +139,7 @@
                 <div class="loading" id="loading">
                     📚 本棚を準備中...
                 </div>
-                
+
                 <!-- Bookshelf Overview Section -->
                 <div class="bookshelves-overview" id="bookshelves-overview" style="display: none;">
                     <h2 class="section-title">📚 本棚一覧</h2>
@@ -150,7 +150,20 @@
                         <!-- Bookshelves overview will be loaded here -->
                     </div>
                 </div>
-                
+
+                <!-- Multi-Select Toolbar -->
+                <div class="multi-select-toolbar" id="multi-select-toolbar" style="display: none;">
+                    <div class="toolbar-left">
+                        <span class="selected-count-display">
+                            選択中: <strong id="selected-count-display">0</strong> 冊
+                        </span>
+                    </div>
+                    <div class="toolbar-right">
+                        <button id="select-all-books-btn" class="btn btn-small">全て選択</button>
+                        <button id="deselect-all-books-btn" class="btn btn-small">選択解除</button>
+                    </div>
+                </div>
+
                 <div class="bookshelf" id="bookshelf">
                     <!-- Books will be dynamically loaded here -->
                 </div>
