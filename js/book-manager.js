@@ -261,14 +261,30 @@ class BookManager {
     }
 
     /**
-     * ASIN から書籍情報を自動取得（複数APIの組み合わせ）
+     * ASIN/ISBN から書籍情報を自動取得（複数APIの組み合わせ）
      */
-    async fetchBookDataFromAmazon(asin) {
-        console.log(`書籍情報取得開始: ${asin}`);
+    async fetchBookDataFromAmazon(identifier) {
+        console.log(`書籍情報取得開始: ${identifier}`);
 
+        const { normalized, type } = this.normalizeIdentifier(identifier);
+
+        // ISBNの場合、OpenBD APIを優先
+        if (type === 'isbn13' || type === 'isbn10') {
+            try {
+                console.log('OpenBD APIで検索中...');
+                const openBDData = await this.fetchFromOpenBD(normalized);
+                if (openBDData && openBDData.title && openBDData.title !== 'タイトル未取得') {
+                    console.log('OpenBD で取得成功:', openBDData);
+                    return openBDData;
+                }
+            } catch (error) {
+                console.log('OpenBD 検索失敗:', error.message);
+            }
+        }
+
+        // Google Books APIで検索
         try {
-            // Google Books APIで検索（実際に動作）
-            const googleBooksData = await this.fetchFromGoogleBooks(asin);
+            const googleBooksData = await this.fetchFromGoogleBooks(identifier);
             if (googleBooksData && googleBooksData.title && googleBooksData.title !== 'タイトル未取得') {
                 console.log('Google Books で取得成功:', googleBooksData);
                 return googleBooksData;
@@ -277,62 +293,95 @@ class BookManager {
             console.log('Google Books 検索失敗:', error.message);
         }
 
-        // Google Books で見つからない場合はテンプレートを返す
+        // すべてのAPIで見つからない場合はテンプレートを返す
         console.log('自動取得失敗、テンプレートで代替');
-        return this.generateSmartBookData(asin);
+        return this.generateSmartBookData(identifier);
     }
 
     /**
-     * Google Books APIから書籍情報を取得
+     * OpenBD APIから書籍情報を取得（日本の書籍データベース）
      */
-    async fetchFromGoogleBooks(asin) {
+    async fetchFromOpenBD(isbn) {
         try {
-            console.log(`Google Books API検索: ${asin}`);
+            console.log(`OpenBD API検索: ${isbn}`);
 
-            // ISBNとして検索
-            let url = `https://www.googleapis.com/books/v1/volumes?q=isbn:${asin}`;
-            let response = await fetch(url);
-            let data = await response.json();
+            const url = `https://api.openbd.jp/v1/get?isbn=${isbn}`;
+            const response = await fetch(url);
+            const data = await response.json();
 
-            console.log('Google Books ISBN検索結果:', data);
+            console.log('OpenBD検索結果:', data);
 
-            if (data.items && data.items.length > 0) {
-                const book = data.items[0].volumeInfo;
-                console.log('見つかった書籍:', book);
+            if (data && data[0] && data[0] !== null) {
+                const bookData = data[0];
+                const summary = bookData.summary;
+                const onix = bookData.onix;
+
+                if (!summary) {
+                    throw new Error('書籍データが不完全です');
+                }
 
                 return {
-                    asin: asin,
-                    title: book.title || 'タイトル未取得',
-                    authors: book.authors ? book.authors.join(', ') : '著者未取得',
+                    asin: isbn,
+                    title: summary.title || 'タイトル未取得',
+                    authors: summary.author || '著者未取得',
                     acquiredTime: Date.now(),
                     readStatus: 'UNKNOWN',
-                    productImage: book.imageLinks ?
-                        (book.imageLinks.large || book.imageLinks.medium || book.imageLinks.thumbnail) :
-                        `https://images-na.ssl-images-amazon.com/images/P/${asin}.01.L.jpg`
+                    productImage: summary.cover || `https://images-na.ssl-images-amazon.com/images/P/${isbn}.01.L.jpg`
                 };
             }
 
-            // ISBNで見つからない場合、一般検索を試行
-            url = `https://www.googleapis.com/books/v1/volumes?q=${asin}`;
-            response = await fetch(url);
-            data = await response.json();
+            throw new Error('書籍が見つかりませんでした');
 
-            console.log('Google Books 一般検索結果:', data);
+        } catch (error) {
+            console.warn('OpenBD API エラー:', error);
+            throw error;
+        }
+    }
 
-            if (data.items && data.items.length > 0) {
-                const book = data.items[0].volumeInfo;
-                console.log('一般検索で見つかった書籍:', book);
+    /**
+     * Google Books APIから書籍情報を取得（ISBN/ASIN対応）
+     */
+    async fetchFromGoogleBooks(identifier) {
+        try {
+            console.log(`Google Books API検索: ${identifier}`);
 
-                return {
-                    asin: asin,
-                    title: book.title || 'タイトル未取得',
-                    authors: book.authors ? book.authors.join(', ') : '著者未取得',
-                    acquiredTime: Date.now(),
-                    readStatus: 'UNKNOWN',
-                    productImage: book.imageLinks ?
-                        (book.imageLinks.large || book.imageLinks.medium || book.imageLinks.thumbnail) :
-                        `https://images-na.ssl-images-amazon.com/images/P/${asin}.01.L.jpg`
-                };
+            // 識別子を正規化してタイプを判定
+            const { normalized, type } = this.normalizeIdentifier(identifier);
+            console.log(`識別子タイプ: ${type}, 正規化後: ${normalized}`);
+
+            let bookData = null;
+
+            // ISBN-13での検索
+            if (type === 'isbn13') {
+                bookData = await this.searchGoogleBooksByISBN(normalized);
+                if (bookData) {
+                    return this.formatGoogleBooksResult(identifier, bookData);
+                }
+            }
+
+            // ISBN-10での検索
+            if (type === 'isbn10') {
+                // ISBN-10そのままで検索
+                bookData = await this.searchGoogleBooksByISBN(normalized);
+                if (bookData) {
+                    return this.formatGoogleBooksResult(identifier, bookData);
+                }
+
+                // ISBN-10をISBN-13に変換して再検索
+                const isbn13 = this.convertISBN10to13(normalized);
+                if (isbn13) {
+                    console.log(`ISBN-10をISBN-13に変換: ${isbn13}`);
+                    bookData = await this.searchGoogleBooksByISBN(isbn13);
+                    if (bookData) {
+                        return this.formatGoogleBooksResult(identifier, bookData);
+                    }
+                }
+            }
+
+            // ASINまたはその他の場合、一般検索を試行
+            bookData = await this.searchGoogleBooksByQuery(normalized);
+            if (bookData) {
+                return this.formatGoogleBooksResult(identifier, bookData);
             }
 
             throw new Error('書籍が見つかりませんでした');
@@ -341,6 +390,64 @@ class BookManager {
             console.warn('Google Books API エラー:', error);
             throw error;
         }
+    }
+
+    /**
+     * Google Books APIでISBN検索
+     */
+    async searchGoogleBooksByISBN(isbn) {
+        try {
+            const url = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            console.log(`ISBN検索結果 (${isbn}):`, data);
+
+            if (data.items && data.items.length > 0) {
+                return data.items[0].volumeInfo;
+            }
+            return null;
+        } catch (error) {
+            console.warn(`ISBN検索エラー (${isbn}):`, error);
+            return null;
+        }
+    }
+
+    /**
+     * Google Books APIで一般検索
+     */
+    async searchGoogleBooksByQuery(query) {
+        try {
+            const url = `https://www.googleapis.com/books/v1/volumes?q=${query}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            console.log('一般検索結果:', data);
+
+            if (data.items && data.items.length > 0) {
+                return data.items[0].volumeInfo;
+            }
+            return null;
+        } catch (error) {
+            console.warn('一般検索エラー:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Google Books APIの結果を統一フォーマットに変換
+     */
+    formatGoogleBooksResult(originalIdentifier, bookData) {
+        return {
+            asin: originalIdentifier,
+            title: bookData.title || 'タイトル未取得',
+            authors: bookData.authors ? bookData.authors.join(', ') : '著者未取得',
+            acquiredTime: Date.now(),
+            readStatus: 'UNKNOWN',
+            productImage: bookData.imageLinks ?
+                (bookData.imageLinks.large || bookData.imageLinks.medium || bookData.imageLinks.thumbnail) :
+                `https://images-na.ssl-images-amazon.com/images/P/${originalIdentifier}.01.L.jpg`
+        };
     }
 
 
@@ -524,10 +631,82 @@ class BookManager {
     }
 
     /**
-     * ASINの妥当性チェック
+     * ASIN/ISBNの妥当性チェック
      */
-    isValidASIN(asin) {
-        return /^[A-Z0-9]{10}$/.test(asin);
+    isValidASIN(identifier) {
+        return this.isValidIdentifier(identifier);
+    }
+
+    /**
+     * ASIN、ISBN-10、ISBN-13のいずれかの妥当性をチェック
+     */
+    isValidIdentifier(identifier) {
+        if (!identifier) return false;
+
+        const normalized = identifier.replace(/[-\s]/g, ''); // ハイフンとスペースを除去
+
+        // ISBN-13 (13桁の数字)
+        if (/^\d{13}$/.test(normalized)) {
+            return true;
+        }
+
+        // ISBN-10 (10桁、最後の桁は数字またはX)
+        if (/^\d{9}[\dXx]$/.test(normalized)) {
+            return true;
+        }
+
+        // ASIN (10桁の英数字)
+        if (/^[A-Z0-9]{10}$/.test(normalized)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * ISBNを正規化（ハイフン除去）し、タイプを判定
+     */
+    normalizeIdentifier(identifier) {
+        if (!identifier) return { normalized: '', type: 'unknown' };
+
+        const normalized = identifier.replace(/[-\s]/g, '').toUpperCase();
+
+        if (/^\d{13}$/.test(normalized)) {
+            return { normalized, type: 'isbn13' };
+        }
+
+        if (/^\d{9}[\dX]$/.test(normalized)) {
+            return { normalized, type: 'isbn10' };
+        }
+
+        if (/^[A-Z0-9]{10}$/.test(normalized)) {
+            return { normalized, type: 'asin' };
+        }
+
+        return { normalized, type: 'unknown' };
+    }
+
+    /**
+     * ISBN-10をISBN-13に変換
+     */
+    convertISBN10to13(isbn10) {
+        if (!isbn10 || isbn10.length !== 10) return null;
+
+        // 末尾のチェックディジットを除去
+        const base = isbn10.substring(0, 9);
+
+        // 978プレフィックスを追加
+        const isbn13Base = '978' + base;
+
+        // ISBN-13のチェックディジットを計算
+        let sum = 0;
+        for (let i = 0; i < 12; i++) {
+            const digit = parseInt(isbn13Base[i]);
+            sum += (i % 2 === 0) ? digit : digit * 3;
+        }
+        const checkDigit = (10 - (sum % 10)) % 10;
+
+        return isbn13Base + checkDigit;
     }
 
     /**
