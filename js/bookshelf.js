@@ -24,7 +24,13 @@ class VirtualBookshelf {
         this.booksPerPage = 50;
         this.sortOrder = 'custom';
         this.sortDirection = 'desc';
-        
+
+        // Multi-select state
+        this.selectedBooks = new Set();
+
+        // Auto-scroll state
+        this.autoScrollInterval = null;
+
         this.init();
     }
 
@@ -358,6 +364,17 @@ class VirtualBookshelf {
                 }
             }
         });
+
+        // Multi-select toolbar buttons
+        const selectAllBtn = document.getElementById('select-all-books-btn');
+        if (selectAllBtn) {
+            selectAllBtn.addEventListener('click', () => this.selectAllBooks());
+        }
+
+        const deselectAllBtn = document.getElementById('deselect-all-books-btn');
+        if (deselectAllBtn) {
+            deselectAllBtn.addEventListener('click', () => this.deselectAllBooks());
+        }
     }
 
     setView(view) {
@@ -584,17 +601,26 @@ class VirtualBookshelf {
         const bookElement = document.createElement('div');
         bookElement.className = 'book-item';
         bookElement.dataset.asin = book.asin;
-        
+
+        // Add selected class if book is selected
+        if (this.selectedBooks.has(book.asin)) {
+            bookElement.classList.add('selected');
+        }
+
         // Add drag-and-drop attributes
         bookElement.draggable = true;
         bookElement.setAttribute('data-book-asin', book.asin);
-        
+
         const userNote = this.userData.notes[book.asin];
-        
+        const isSelected = this.selectedBooks.has(book.asin);
+
         if (displayType === 'cover' || displayType === 'covers') {
             const amazonUrl = this.bookManager.getAmazonUrl(book, this.userData.settings.affiliateId);
             bookElement.innerHTML = `
                 <div class="book-cover-container">
+                    <div class="book-select-checkbox">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''} data-asin="${book.asin}">
+                    </div>
                     <div class="drag-handle">⋮⋮</div>
                     <a href="${amazonUrl}" target="_blank" rel="noopener noreferrer" class="book-cover-link">
                         ${book.productImage ?
@@ -617,6 +643,9 @@ class VirtualBookshelf {
         } else {
             const amazonUrl = this.bookManager.getAmazonUrl(book, this.userData.settings.affiliateId);
             bookElement.innerHTML = `
+                <div class="book-select-checkbox">
+                    <input type="checkbox" ${isSelected ? 'checked' : ''} data-asin="${book.asin}">
+                </div>
                 <div class="book-cover-container">
                     <div class="drag-handle">⋮⋮</div>
                     <a href="${amazonUrl}" target="_blank" rel="noopener noreferrer" class="book-cover-link">
@@ -640,13 +669,28 @@ class VirtualBookshelf {
             `;
         }
         
+        // Add checkbox event listener
+        const checkbox = bookElement.querySelector('.book-select-checkbox input[type="checkbox"]');
+        if (checkbox) {
+            checkbox.addEventListener('change', (e) => {
+                e.stopPropagation();
+                this.toggleBookSelection(book.asin);
+            });
+        }
+
         // Add drag event listeners
         bookElement.addEventListener('dragstart', (e) => this.handleDragStart(e));
         bookElement.addEventListener('dragover', (e) => this.handleDragOver(e));
         bookElement.addEventListener('drop', (e) => this.handleDrop(e));
         bookElement.addEventListener('dragend', (e) => this.handleDragEnd(e));
-        
+
         bookElement.addEventListener('click', (e) => {
+            // Handle checkbox clicks
+            if (e.target.closest('.book-select-checkbox')) {
+                e.stopPropagation();
+                return;
+            }
+
             // Prevent click when dragging or clicking drag handle
             if (e.target.closest('.drag-handle') || bookElement.classList.contains('dragging')) {
                 e.preventDefault();
@@ -677,10 +721,28 @@ class VirtualBookshelf {
         const bookItem = e.target.closest('.book-item');
         this.draggedElement = bookItem;
         this.draggedASIN = bookItem.dataset.asin;
-        bookItem.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', this.draggedASIN);
-        console.log('🎯 Drag started:', this.draggedASIN, bookItem);
+
+        // Check if we're dragging multiple selected books
+        if (this.selectedBooks.has(this.draggedASIN) && this.selectedBooks.size > 1) {
+            // Dragging multiple books
+            this.draggedBooks = Array.from(this.selectedBooks);
+            bookItem.classList.add('dragging');
+            // Add dragging class to all selected books
+            this.draggedBooks.forEach(asin => {
+                const element = document.querySelector(`.book-item[data-asin="${asin}"]`);
+                if (element) element.classList.add('dragging');
+            });
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', JSON.stringify(this.draggedBooks));
+            console.log('🎯 Multi-drag started:', this.draggedBooks.length, 'books');
+        } else {
+            // Dragging single book
+            this.draggedBooks = null;
+            bookItem.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', this.draggedASIN);
+            console.log('🎯 Drag started:', this.draggedASIN, bookItem);
+        }
     }
 
     handleDragOver(e) {
@@ -688,13 +750,23 @@ class VirtualBookshelf {
             e.preventDefault();
         }
         e.dataTransfer.dropEffect = 'move';
-        
-        // Visual feedback
+
+        // Auto-scroll when dragging near edges
+        this.handleAutoScroll(e);
+
+        // Clear previous visual feedback first
+        document.querySelectorAll('.book-item').forEach(item => {
+            if (item !== this.draggedElement && !item.classList.contains('dragging')) {
+                item.style.borderLeft = '';
+            }
+        });
+
+        // Visual feedback for current target
         const target = e.target.closest('.book-item');
-        if (target && target !== this.draggedElement) {
+        if (target && target !== this.draggedElement && !target.classList.contains('dragging')) {
             target.style.borderLeft = '3px solid #3498db';
         }
-        
+
         return false;
     }
 
@@ -703,10 +775,19 @@ class VirtualBookshelf {
             e.stopPropagation();
         }
 
+        // Stop auto-scroll
+        this.stopAutoScroll();
+
         const target = e.target.closest('.book-item');
         if (target && target !== this.draggedElement) {
             const targetASIN = target.dataset.asin;
-            this.reorderBooks(this.draggedASIN, targetASIN);
+
+            // Check if we're dropping multiple books
+            if (this.draggedBooks && this.draggedBooks.length > 1) {
+                this.reorderMultipleBooks(this.draggedBooks, targetASIN);
+            } else {
+                this.reorderBooks(this.draggedASIN, targetASIN);
+            }
         }
 
         // Clear visual feedback
@@ -718,13 +799,26 @@ class VirtualBookshelf {
     }
 
     handleDragEnd(e) {
-        const bookItem = e.target.closest('.book-item');
-        if (bookItem) {
-            bookItem.classList.remove('dragging');
+        // Stop auto-scroll
+        this.stopAutoScroll();
+
+        // Remove dragging class from all dragged books
+        if (this.draggedBooks && this.draggedBooks.length > 1) {
+            this.draggedBooks.forEach(asin => {
+                const element = document.querySelector(`.book-item[data-asin="${asin}"]`);
+                if (element) element.classList.remove('dragging');
+            });
+        } else {
+            const bookItem = e.target.closest('.book-item');
+            if (bookItem) {
+                bookItem.classList.remove('dragging');
+            }
         }
+
         this.draggedElement = null;
         this.draggedASIN = null;
-        
+        this.draggedBooks = null;
+
         // Clear all visual feedback
         document.querySelectorAll('.book-item').forEach(item => {
             item.style.borderLeft = '';
@@ -778,6 +872,65 @@ class VirtualBookshelf {
         // Save and refresh display
         this.saveUserData();
         this.updateDisplay();
+    }
+
+    reorderMultipleBooks(draggedASINs, targetASIN) {
+        const currentBookshelfId = document.getElementById('bookshelf-selector').value;
+
+        // Initialize bookOrder if it doesn't exist
+        if (!this.userData.bookOrder) {
+            this.userData.bookOrder = {};
+        }
+        if (!this.userData.bookOrder[currentBookshelfId]) {
+            this.userData.bookOrder[currentBookshelfId] = [];
+        }
+
+        let bookOrder = this.userData.bookOrder[currentBookshelfId];
+
+        // If this is the first time ordering for this bookshelf, initialize with current filtered order
+        if (bookOrder.length === 0) {
+            bookOrder = this.filteredBooks.map(book => book.asin);
+            this.userData.bookOrder[currentBookshelfId] = bookOrder;
+        }
+
+        // Add any dragged items that are not in order yet
+        draggedASINs.forEach(asin => {
+            if (!bookOrder.includes(asin)) {
+                bookOrder.push(asin);
+            }
+        });
+
+        // Remove all dragged items from their current positions (in reverse order to maintain indices)
+        draggedASINs.forEach(asin => {
+            const index = bookOrder.indexOf(asin);
+            if (index !== -1) {
+                bookOrder.splice(index, 1);
+            }
+        });
+
+        // Insert all dragged items at the target position (before target)
+        const targetIndex = bookOrder.indexOf(targetASIN);
+        if (targetIndex !== -1) {
+            // Insert in order
+            draggedASINs.forEach((asin, i) => {
+                bookOrder.splice(targetIndex + i, 0, asin);
+            });
+        } else {
+            // If target not found, add all to end
+            draggedASINs.forEach(asin => {
+                bookOrder.push(asin);
+            });
+        }
+
+        // Switch to custom order automatically when manually reordering
+        this.sortOrder = 'custom';
+        document.getElementById('sort-order').value = 'custom';
+
+        // Save and refresh display
+        this.saveUserData();
+        this.updateDisplay();
+
+        console.log('🎯 Reordered', draggedASINs.length, 'books to position before', targetASIN);
     }
 
     showBookDetail(book, isEditMode = false) {
@@ -2717,6 +2870,104 @@ class VirtualBookshelf {
 
         const staticUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}static/${bookshelfId}.html`;
         window.open(staticUrl, '_blank');
+    }
+
+    // Multi-Select Methods
+    toggleBookSelection(asin) {
+        if (this.selectedBooks.has(asin)) {
+            this.selectedBooks.delete(asin);
+        } else {
+            this.selectedBooks.add(asin);
+        }
+        this.updateSelectionUI();
+    }
+
+    selectAllBooks() {
+        // Select all visible books in current view
+        const currentBookshelfId = document.getElementById('bookshelf-selector').value;
+        let booksToSelect = this.filteredBooks;
+
+        if (currentBookshelfId !== 'all') {
+            const bookshelf = this.userData.bookshelves.find(bs => bs.id === currentBookshelfId);
+            if (bookshelf) {
+                booksToSelect = this.filteredBooks.filter(book => bookshelf.books.includes(book.asin));
+            }
+        }
+
+        booksToSelect.forEach(book => this.selectedBooks.add(book.asin));
+        this.updateSelectionUI();
+    }
+
+    deselectAllBooks() {
+        this.selectedBooks.clear();
+        this.updateSelectionUI();
+    }
+
+    updateSelectionUI() {
+        // Update checkboxes and selected classes
+        const bookElements = document.querySelectorAll('.book-item');
+        bookElements.forEach(bookElement => {
+            const asin = bookElement.dataset.asin;
+            const checkbox = bookElement.querySelector('.book-select-checkbox input[type="checkbox"]');
+            const isSelected = this.selectedBooks.has(asin);
+
+            if (checkbox) {
+                checkbox.checked = isSelected;
+            }
+
+            if (isSelected) {
+                bookElement.classList.add('selected');
+            } else {
+                bookElement.classList.remove('selected');
+            }
+        });
+
+        // Update toolbar
+        this.updateToolbar();
+    }
+
+    updateToolbar() {
+        const toolbar = document.getElementById('multi-select-toolbar');
+        const countDisplay = document.getElementById('selected-count-display');
+
+        if (this.selectedBooks.size > 0) {
+            toolbar.style.display = 'flex';
+            countDisplay.textContent = this.selectedBooks.size;
+        } else {
+            toolbar.style.display = 'none';
+        }
+    }
+
+    // Auto-scroll Methods
+    handleAutoScroll(e) {
+        const scrollThreshold = 100; // pixels from edge to trigger scroll
+        const scrollSpeed = 10; // pixels per interval
+
+        const viewportHeight = window.innerHeight;
+        const mouseY = e.clientY;
+
+        // Clear existing interval
+        this.stopAutoScroll();
+
+        // Check if near top edge
+        if (mouseY < scrollThreshold) {
+            this.autoScrollInterval = setInterval(() => {
+                window.scrollBy(0, -scrollSpeed);
+            }, 20);
+        }
+        // Check if near bottom edge
+        else if (mouseY > viewportHeight - scrollThreshold) {
+            this.autoScrollInterval = setInterval(() => {
+                window.scrollBy(0, scrollSpeed);
+            }, 20);
+        }
+    }
+
+    stopAutoScroll() {
+        if (this.autoScrollInterval) {
+            clearInterval(this.autoScrollInterval);
+            this.autoScrollInterval = null;
+        }
     }
 }
 

@@ -1810,3 +1810,128 @@ body {
     border-color: #5a6268;
     color: white;
 }
+
+/* Multi-Select Toolbar Styles */
+.multi-select-toolbar {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.multi-select-toolbar .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.multi-select-toolbar .selected-count-display {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.multi-select-toolbar .selected-count-display strong {
+    color: var(--secondary-color);
+    font-size: 1.2rem;
+}
+
+.multi-select-toolbar .toolbar-right {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Book Selection Checkbox Styles */
+.book-select-checkbox {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    opacity: 0.3;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.book-select-checkbox:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.book-item:hover .book-select-checkbox {
+    opacity: 0.7;
+}
+
+.book-select-checkbox input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    accent-color: var(--secondary-color);
+}
+
+/* Selected Book Highlight */
+.book-item.selected {
+    outline: 3px solid var(--secondary-color);
+    outline-offset: 2px;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.book-item.selected .book-cover-container {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
+}
+
+/* List View Checkbox Styles */
+.book-list-item .book-select-checkbox {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-right: 1rem;
+}
+
+.book-list-item.selected {
+    background: linear-gradient(90deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+    border-left: 4px solid var(--secondary-color);
+}
+
+/* Multi-Drag Preview */
+.multi-drag-preview {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    background: white;
+    border: 2px solid var(--secondary-color);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .multi-select-toolbar {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .multi-select-toolbar .toolbar-left,
+    .multi-select-toolbar .toolbar-right {
+        justify-content: center;
+    }
+
+    .book-select-checkbox {
+        width: 28px;
+        height: 28px;
+    }
+
+    .book-select-checkbox input[type="checkbox"] {
+        width: 28px;
+        height: 28px;
+    }
+}
