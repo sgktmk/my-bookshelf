@@ -1,5 +1,5 @@
 {
-  "exportDate": "2025-11-08T12:42:03.816Z",
+  "exportDate": "2025-11-08T13:29:44.315Z",
   "books": {
     "B009GXLRZY": {
       "title": "イザベラ・バードの日本紀行（上） (講談社学術文庫)",
@@ -1056,6 +1056,193 @@
       "addedDate": 1762605591941,
       "memo": "",
       "rating": 0
+    },
+    "4297150646": {
+      "title": "チームの力で組織を動かす 〜ソフトウェア開発を加速するチーム指向の組織設計",
+      "authors": "松本成幸",
+      "acquiredTime": 1762607720378,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/4297150646.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762607720378,
+      "memo": "",
+      "rating": 0
+    },
+    "4774196053": {
+      "title": "エンジニアリング組織論への招待",
+      "authors": "広木大地",
+      "acquiredTime": 1762607745424,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/4774196053.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762607745424,
+      "memo": "",
+      "rating": 0
+    },
+    "429714249X": {
+      "title": "エンジニア組織を強くする開発生産性の教科書 ~事例から学ぶ、生産性向上への取り組み方~",
+      "authors": "佐藤将高, Findy Inc.",
+      "acquiredTime": 1762607760363,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/429714249X.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762607760363,
+      "memo": "",
+      "rating": 0
+    },
+    "4297127830": {
+      "title": "良いコード/悪いコードで学ぶ設計入門―保守しやすい成長し続けるコードの書き方",
+      "authors": "仙塲大也",
+      "acquiredTime": 1762607789795,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/4297127830.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762607789795,
+      "memo": "",
+      "rating": 0
+    },
+    "B0DZ876G79": {
+      "title": "Software Design 2025年4月号",
+      "authors": "Software Design編集部",
+      "acquiredTime": 1762560000000,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/B0DZ876G79.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762607981021,
+      "memo": "",
+      "rating": 0
+    },
+    "B0F1RYC61P": {
+      "title": "Software Design 2025年5月号",
+      "authors": "Software Design編集部",
+      "acquiredTime": 1762608048992,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/B0F1RYC61P.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608048992,
+      "memo": "",
+      "rating": 0
+    },
+    "B00UJXLDG8": {
+      "title": "Software Design 2025年6月号",
+      "authors": "Software Design編集部",
+      "acquiredTime": 1762608145536,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/B00UJXLDG8.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608145536,
+      "memo": "",
+      "rating": 0
+    },
+    "B0F8T47GMY": {
+      "title": "Software Design 2025年7月号",
+      "authors": "Software Design編集部",
+      "acquiredTime": 1762608161660,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/B0F8T47GMY.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608161660,
+      "memo": "",
+      "rating": 0
+    },
+    "B0FGHSF4BV": {
+      "title": "Software Design 2025年8月号",
+      "authors": "Software Design編集部",
+      "acquiredTime": 1762608172531,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/B0FGHSF4BV.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608172531,
+      "memo": "",
+      "rating": 0
+    },
+    "B0FHVWW2WL": {
+      "title": "Software Design 2025年9月号",
+      "authors": "Software Design編集部",
+      "acquiredTime": 1762608183660,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/B0FHVWW2WL.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608183660,
+      "memo": "",
+      "rating": 0
+    },
+    "B0FMQXTPY2": {
+      "title": "Software Design 2025年10月号",
+      "authors": "Software Design編集部",
+      "acquiredTime": 1762608212955,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/B0FMQXTPY2.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608212955,
+      "memo": "",
+      "rating": 0
+    },
+    "B0FRQBBX8H": {
+      "title": "Software Design 2025年11月号",
+      "authors": "Software Design編集部",
+      "acquiredTime": 1762608226956,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/B0FRQBBX8H.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608226956,
+      "memo": "",
+      "rating": 0
+    },
+    "4873117194": {
+      "title": "入門React",
+      "authors": "フランキー バグナルディ, Jonathan Beebe, リチャードフェルドマン",
+      "acquiredTime": 1762608458190,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/4873117194.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608458190,
+      "memo": "",
+      "rating": 0
+    },
+    "4814400438": {
+      "title": "プロダクトマネージャーのしごと第2版",
+      "authors": "Matt LeMay",
+      "acquiredTime": 1762608466815,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/4814400438.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608466815,
+      "memo": "",
+      "rating": 0
+    },
+    "4873114403": {
+      "title": "実用Git",
+      "authors": "Jon Loeliger",
+      "acquiredTime": 1762608548346,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/4873114403.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608548347,
+      "memo": "",
+      "rating": 0
+    },
+    "4873117585": {
+      "title": "ゼロから作るDeep Learning",
+      "authors": "斎藤康毅",
+      "acquiredTime": 1762608557783,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/4873117585.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608557783,
+      "memo": "",
+      "rating": 0
+    },
+    "4873115892": {
+      "title": "SQLアンチパターン",
+      "authors": "ビルカーウィン",
+      "acquiredTime": 1762608567644,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/4873115892.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1762608567644,
+      "memo": "",
+      "rating": 0
     }
   },
   "bookshelves": [],
@@ -1066,11 +1253,11 @@
     "theme": "light",
     "booksPerPage": "50",
     "showImagesInOverview": true,
-    "coverSize": "medium"
+    "coverSize": "small"
   },
   "bookOrder": {},
   "stats": {
-    "totalBooks": 96,
+    "totalBooks": 113,
     "notesCount": 0
   },
   "version": "2.0"
