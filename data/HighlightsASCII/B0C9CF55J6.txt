@@ -1,0 +1,21 @@
+---
+kindle-sync:
+  bookId: '60702'
+  title: エフェクチュエーション　優れた起業家が実践する「5つの原則」
+  author: 吉田 満梨、中村 龍太
+  asin: B0C9CF55J6
+  lastAnnotatedDate: '2025-07-06'
+  bookImageUrl: 'https://m.media-amazon.com/images/I/81niyvNhmDL._SY160.jpg'
+  highlightsCount: 1
+---
+# エフェクチュエーション　優れた起業家が実践する「5つの原則」
+## Metadata
+* Author: [吉田 満梨、中村 龍太](https://www.amazon.comundefined)
+* ASIN: B0C9CF55J6
+* Reference: https://www.amazon.com/dp/B0C9CF55J6
+* [Kindle link](kindle://book?action=open&asin=B0C9CF55J6)
+
+## Highlights
+エフェクチュエーションの大きな特徴は、従来の経営学が重視してきた「予測」ではなく、「コントロール」によって、不確実性に対処する思考様式であることです。そのため、たとえば、既存の顧客ニーズを前提にできない製品・サービスの事業化、最適なアプローチを定義することが困難な課題解決など、高い不確実性を伴うがゆえに、予測に基づく意思決定では合理的と見なされないような取り組みの推進にも、適用することができます。 — location: [19](kindle://book?action=open&asin=B0C9CF55J6&location=19) ^ref-64673
+
+---

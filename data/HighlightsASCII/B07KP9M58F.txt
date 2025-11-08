@@ -1,0 +1,24 @@
+---
+kindle-sync:
+  bookId: '23438'
+  title: しょぼい起業で生きていく
+  author: えらいてんちょう
+  asin: B07KP9M58F
+  lastAnnotatedDate: '2025-05-06'
+  bookImageUrl: 'https://m.media-amazon.com/images/I/81SOoS25MhL._SY160.jpg'
+  highlightsCount: 2
+---
+# しょぼい起業で生きていく
+## Metadata
+* Author: [えらいてんちょう](https://www.amazon.comundefined)
+* ASIN: B07KP9M58F
+* Reference: https://www.amazon.com/dp/B07KP9M58F
+* [Kindle link](kindle://book?action=open&asin=B07KP9M58F)
+
+## Highlights
+YouTube などの動画媒体に触れている時間のほうが長くなっていくと予想される からです。 — location: [932](kindle://book?action=open&asin=B07KP9M58F&location=932) ^ref-44193
+
+---
+１０００人くらい雇ってる年商１００億の企業の利益が１億、とかあるけど、地獄だなって思って見てます。 — location: [1711](kindle://book?action=open&asin=B07KP9M58F&location=1711) ^ref-842
+
+---

@@ -1,0 +1,36 @@
+---
+kindle-sync:
+  bookId: '54951'
+  title: イーロン・マスク　下 (文春e-book)
+  author: ウォルター・アイザックソン、井口 耕二
+  asin: B0C5QMX279
+  lastAnnotatedDate: '2025-05-06'
+  bookImageUrl: 'https://m.media-amazon.com/images/I/81OcxhIuk9L._SY160.jpg'
+  highlightsCount: 6
+---
+# イーロン・マスク　下
+## Metadata
+* Author: [ウォルター・アイザックソン、井口 耕二](https://www.amazon.comundefined)
+* ASIN: B0C5QMX279
+* Reference: https://www.amazon.com/dp/B0C5QMX279
+* [Kindle link](kindle://book?action=open&asin=B0C5QMX279)
+
+## Highlights
+わざとにせよたまたまにせよ、人を傷つけかねないＡＩをだれかが作るかもしれないと考えたから、マスクは、２０１５年にＯｐｅｎＡＩを立ち上げた。 — location: [1414](kindle://book?action=open&asin=B0C5QMX279&location=1414) ^ref-62887
+
+---
+２０２１年 10 月、テスラは、時価総額１兆ドルを超えた米国史上６社目の企業となった。ライバル会社の上から５社──トヨタ、フォルクスワーゲン、ダイムラー、フォード、ＧＭ──の合計さえも超えたのだ。さらに、２０２２年４月に発表された四半期決算は、売上が前年同期比 81％増の１９０億ドルで利益が 50 億ドルとなった。この結果、マスクは約５６０億ドルの報酬を得ることになり、２０２２年スタート時点で資産は３０４０億ドルまで増えている。 — location: [1659](kindle://book?action=open&asin=B0C5QMX279&location=1659) ^ref-61908
+
+---
+マスクは最初から、金銭が取り扱えるソーシャルネットワークというＸドットコムの夢を実現できる可能性をツイッターに見ていたのだ。 — location: [2402](kindle://book?action=open&asin=B0C5QMX279&location=2402) ^ref-23358
+
+---
+１年ほどたったある日、ロスはとある会議で出会ったパランティア社の幹部に採用される。ピーター・ティールも立ち上げに関わった会社で、機密情報を含むデータの分析や諜報が仕事だ。ロスの紹介でジェームズもインターンとして仕事をするようになる。そしてなんだかんだの末、ロスも、テスラのオートパイロットチームでジェームズと並んで仕事をするようになった。 — location: [3622](kindle://book?action=open&asin=B0C5QMX279&location=3622) ^ref-20913
+
+---
+アラン・チューリングが１９５０年の論文、「計算する機械と知性（Computing Machinery and Intelligence）」で思い描いた機械学習のアプローチだ。 — location: [5062](kindle://book?action=open&asin=B0C5QMX279&location=5062) ^ref-20876
+
+---
+心臓部はチップメーカーＮＶＩＤＩＡ製のＧＰＵ（グラフィックス・プロセッシング・ユニット）である。ドージョーというスーパーコンピューターも基幹部品から構築していて、２０２３年中には、ＡＩシステムを動画で訓練する処理をドージョーに移したいとマスクは考えている。 — location: [5065](kindle://book?action=open&asin=B0C5QMX279&location=5065) ^ref-27573
+
+---

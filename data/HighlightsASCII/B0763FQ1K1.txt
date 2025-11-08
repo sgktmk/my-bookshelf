@@ -1,0 +1,21 @@
+---
+kindle-sync:
+  bookId: '13845'
+  title: 孫子の兵法―――考え抜かれた「人生戦略の書」の読み方 (知的生きかた文庫)
+  author: 守屋 洋
+  asin: B0763FQ1K1
+  lastAnnotatedDate: '2025-05-06'
+  bookImageUrl: 'https://m.media-amazon.com/images/I/71CPOhGp1gL._SY160.jpg'
+  highlightsCount: 1
+---
+# 孫子の兵法―――考え抜かれた「人生戦略の書」の読み方
+## Metadata
+* Author: [守屋 洋](https://www.amazon.comundefined)
+* ASIN: B0763FQ1K1
+* Reference: https://www.amazon.com/dp/B0763FQ1K1
+* [Kindle link](kindle://book?action=open&asin=B0763FQ1K1)
+
+## Highlights
+戦いは奇を以って勝つ — location: [743](kindle://book?action=open&asin=B0763FQ1K1&location=743) ^ref-61333
+
+---

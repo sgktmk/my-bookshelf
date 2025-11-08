@@ -1,0 +1,21 @@
+---
+kindle-sync:
+  bookId: '46015'
+  title: 読みやすい文章を書くための技法
+  author: 萩原涼介
+  asin: B019ZM14K8
+  lastAnnotatedDate: '2025-05-06'
+  bookImageUrl: 'https://m.media-amazon.com/images/I/81FHsm0EipL._SY160.jpg'
+  highlightsCount: 1
+---
+# 読みやすい文章を書くための技法
+## Metadata
+* Author: [萩原涼介](https://www.amazon.comundefined)
+* ASIN: B019ZM14K8
+* Reference: https://www.amazon.com/dp/B019ZM14K8
+* [Kindle link](kindle://book?action=open&asin=B019ZM14K8)
+
+## Highlights
+ＰＯＩＮＴ（導入結論）　　◯◯に関しての結論は◯◯ ​​​　ＲＥＡＳＯＮ（理由）　　　なぜならば◯◯だから ​​​　ＥＸＡＭＰＬＥ（具体例）　具体的には◯◯ ​​​　ＰＯＩＮＴ（最終結論）　　よって結論は◯◯となる — location: [33](kindle://book?action=open&asin=B019ZM14K8&location=33) ^ref-12249
+
+---

@@ -1,0 +1,63 @@
+---
+kindle-sync:
+  bookId: '43672'
+  title: セカンドＩＤ 「本当の自分」に出会う、これからの時代の生き方 (きずな出版)
+  author: 小橋 賢児
+  asin: B07S8S55PD
+  lastAnnotatedDate: '2025-05-06'
+  bookImageUrl: 'https://m.media-amazon.com/images/I/91FnW+UgGWL._SY160.jpg'
+  highlightsCount: 15
+---
+# セカンドＩＤ 「本当の自分」に出会う、これからの時代の生き方
+## Metadata
+* Author: [小橋 賢児](https://www.amazon.comundefined)
+* ASIN: B07S8S55PD
+* Reference: https://www.amazon.com/dp/B07S8S55PD
+* [Kindle link](kindle://book?action=open&asin=B07S8S55PD)
+
+## Highlights
+僕はよく「行動は誰にでもできる錬金術」と言っている。 　 いまの状況を打破したいと思ったり、何かを変えたいと思うなら、どんな小さなことでもいいからとにかく行動して、いまいる「場」を変えてみる。 — location: [446](kindle://book?action=open&asin=B07S8S55PD&location=446) ^ref-34885
+
+---
+だからこそ、「体験したことがきっかけで世界が変わる」ということを、僕はいつもチームのみんなに伝えていた。 — location: [829](kindle://book?action=open&asin=B07S8S55PD&location=829) ^ref-20563
+
+---
+きっかけは何だっていい。 「自分の内なる興味からの行動」の先で出会った景色や感情にこそ、自分にしかつくれない人生が隠れている。 — location: [830](kindle://book?action=open&asin=B07S8S55PD&location=830) ^ref-51546
+
+---
+こんなふうに「過去から未来」「未来から過去」へと頻繁に飛んでしまい、「いま」という瞬間をほとんど生きていないことに気づかされるのだった。 — location: [912](kindle://book?action=open&asin=B07S8S55PD&location=912) ^ref-40685
+
+---
+伝統と言われる所以は、その時代の人がものすごい熱量と情熱をもってクリエイションしてイノベーションを起こしたから。 　そして、それを体験した人たちが、全身の毛穴が開くような強烈な体験を後世まで残したいという思いで紡がれ、伝統になったのではないだろうか。 　しかし、時間とともに、その時代のイノベーションはいつしか「ただ守るだけ」のものになってしまっているのも否めない。それでは、いまの人たちからしたら、古いものをただ押し付けられているだけになってしまう。 — location: [1025](kindle://book?action=open&asin=B07S8S55PD&location=1025) ^ref-50537
+
+---
+本質的に残していくのであれば、当時と同じような熱量でクリエイションして、イノベーションを起こして、毛穴が開くような体験にしてファンにしないといけ — location: [1029](kindle://book?action=open&asin=B07S8S55PD&location=1029) ^ref-9973
+
+---
+僕はいつも何かアイデアを構想するとき「出会い」＋「ストック」＋「違和感」というこの３つのプロセスを大事にしている。 — location: [1034](kindle://book?action=open&asin=B07S8S55PD&location=1034) ^ref-59563
+
+---
+そして、取捨選択を迫られたとき、「何を選べば目的に対して最善か」を自分の感覚で知ることが大切なんだと思う。 — location: [1054](kindle://book?action=open&asin=B07S8S55PD&location=1054) ^ref-23820
+
+---
+日本では「クリエイター」という言葉が、デザイナーやミュージシャン、映画監督などの意味合いだけで捉えられがちだ。だから「自分はクリエイティブでない」と思い、創造することをストップしてしまっている人が多くいる。 — location: [1069](kindle://book?action=open&asin=B07S8S55PD&location=1069) ^ref-22379
+
+---
+しかし、「クリエイティブ＝創造」であり、仕事や日常の出来事で、自分 — location: [1071](kindle://book?action=open&asin=B07S8S55PD&location=1071) ^ref-23182
+
+---
+想像」を「創造」に変化させることは誰でもできることだと思う。 — location: [1072](kindle://book?action=open&asin=B07S8S55PD&location=1072) ^ref-38508
+
+---
+何度もいうように、昨今はＳＮＳで世界とつながれたことで、これまでにない独創的なコミュニティが数多く生まれてきている。 誰もがそのコミュニティの中心となって、新しい自分探しをできる時代に突入している。 — location: [1147](kindle://book?action=open&asin=B07S8S55PD&location=1147) ^ref-2789
+
+---
+普段いるコミュニティとは違うコミュニティに属してみたり、またどんな小さなことでも、いつもとは違うことやワクワクしたことにチャレンジしてみることで、新しい自分のアイデンティティに気づけることがあると思う。 　そこで見つけた新しい自分こそが、「セカンドＩＤ」なんだ。 — location: [1165](kindle://book?action=open&asin=B07S8S55PD&location=1165) ^ref-33743
+
+---
+医者である傍ら、ユーチューバーになってもいい。 　ＯＬをする傍ら、心理カウンセラーになってもいい。 　主婦である傍ら、画家になったっていい。 — location: [1168](kindle://book?action=open&asin=B07S8S55PD&location=1168) ^ref-29857
+
+---
+これは僕が特別だからではありません。起きた出来事の見方を少し変えたり、いつもと違う「場」を選ぶというほんのちょっとの勇気、たったそれだけで新しい自分の可能性に出会えるということをお伝えしたかったのです。 — location: [1186](kindle://book?action=open&asin=B07S8S55PD&location=1186) ^ref-54208
+
+---
