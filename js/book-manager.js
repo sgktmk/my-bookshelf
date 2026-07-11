@@ -49,7 +49,10 @@ class BookManager {
                     // 追加フィールドも含める
                     ...(book.memo && { memo: book.memo }),
                     ...(book.rating && { rating: book.rating }),
-                    ...(book.updatedAsin && { updatedAsin: book.updatedAsin })
+                    ...(book.updatedAsin && { updatedAsin: book.updatedAsin }),
+                    ...(book.format && { format: book.format }),
+                    ...(book.publisher && { publisher: book.publisher }),
+                    ...(book.publishedDate && { publishedDate: book.publishedDate })
                 })),
                 metadata: {
                     totalBooks: libraryData.stats.totalBooks,
@@ -148,6 +151,7 @@ class BookManager {
                 this.library.books.push({
                     ...kindleBook,
                     source: 'kindle_import',
+                    format: kindleBook.format || 'kindle',
                     addedDate: Date.now()
                 });
                 importResults.added++;
@@ -189,6 +193,7 @@ class BookManager {
                 const bookToAdd = {
                     ...book,
                     source: 'kindle_import',
+                    format: book.format || 'kindle',
                     addedDate: Date.now()
                 };
                 
@@ -326,7 +331,9 @@ class BookManager {
                     authors: summary.author || '著者未取得',
                     acquiredTime: Date.now(),
                     readStatus: 'UNKNOWN',
-                    productImage: summary.cover || `https://images-na.ssl-images-amazon.com/images/P/${isbn}.01.L.jpg`
+                    productImage: summary.cover || `https://images-na.ssl-images-amazon.com/images/P/${isbn}.01.L.jpg`,
+                    ...(summary.publisher && { publisher: summary.publisher }),
+                    ...(summary.pubdate && { publishedDate: summary.pubdate })
                 };
             }
 
@@ -414,6 +421,67 @@ class BookManager {
     }
 
     /**
+     * キーワード（タイトル・著者）で書籍候補を検索
+     * @returns {Array<{identifier, identifierType, title, authors, thumbnail, publisher, publishedDate}>}
+     */
+    async searchBooksByKeyword(query, maxResults = 12) {
+        const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=${maxResults}&country=JP`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`検索に失敗しました (${response.status})`);
+        }
+        const data = await response.json();
+
+        if (!data.items || data.items.length === 0) {
+            return [];
+        }
+
+        return data.items.map(item => {
+            const info = item.volumeInfo || {};
+            // ISBN-13優先、なければISBN-10
+            let identifier = null;
+            let identifierType = null;
+            for (const id of (info.industryIdentifiers || [])) {
+                if (id.type === 'ISBN_13') {
+                    identifier = id.identifier;
+                    identifierType = 'isbn13';
+                    break;
+                }
+                if (id.type === 'ISBN_10' && !identifier) {
+                    identifier = id.identifier;
+                    identifierType = 'isbn10';
+                }
+            }
+
+            return {
+                googleId: item.id,
+                identifier: identifier,
+                identifierType: identifierType,
+                title: info.title || '',
+                authors: info.authors ? info.authors.join(', ') : '',
+                publisher: info.publisher || '',
+                publishedDate: info.publishedDate || '',
+                thumbnail: info.imageLinks ?
+                    (info.imageLinks.thumbnail || info.imageLinks.smallThumbnail || '').replace(/^http:/, 'https:') : ''
+            };
+        });
+    }
+
+    /**
+     * 識別子から本の形式を推測（ASIN→Kindle、ISBN→紙）
+     */
+    guessFormat(identifier) {
+        const { normalized, type } = this.normalizeIdentifier(identifier);
+        if (type === 'isbn13' || type === 'isbn10') {
+            return 'paper';
+        }
+        if (type === 'asin' && normalized.startsWith('B')) {
+            return 'kindle';
+        }
+        return 'paper';
+    }
+
+    /**
      * Google Books APIで一般検索
      */
     async searchGoogleBooksByQuery(query) {
@@ -446,7 +514,9 @@ class BookManager {
             readStatus: 'UNKNOWN',
             productImage: bookData.imageLinks ?
                 (bookData.imageLinks.large || bookData.imageLinks.medium || bookData.imageLinks.thumbnail) :
-                `https://images-na.ssl-images-amazon.com/images/P/${originalIdentifier}.01.L.jpg`
+                `https://images-na.ssl-images-amazon.com/images/P/${originalIdentifier}.01.L.jpg`,
+            ...(bookData.publisher && { publisher: bookData.publisher }),
+            ...(bookData.publishedDate && { publishedDate: bookData.publishedDate })
         };
     }
 
@@ -535,7 +605,10 @@ class BookManager {
             acquiredTime: bookData.acquiredTime || Date.now(),
             readStatus: bookData.readStatus || 'UNKNOWN',
             productImage: bookData.productImage || `https://images-na.ssl-images-amazon.com/images/P/${asin}.01.L.jpg`,
-            source: 'manual_add',
+            format: bookData.format || this.guessFormat(asin),
+            ...(bookData.publisher && { publisher: bookData.publisher }),
+            ...(bookData.publishedDate && { publishedDate: bookData.publishedDate }),
+            source: bookData.source || 'manual_add',
             addedDate: Date.now()
         };
 

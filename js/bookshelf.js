@@ -31,6 +31,14 @@ class VirtualBookshelf {
         // Auto-scroll state
         this.autoScrollInterval = null;
 
+        // GitHub sync
+        this.githubSync = new GitHubSync();
+        this.hasUnsavedChanges = false;
+
+        // Barcode scan state
+        this.barcodeStream = null;
+        this.barcodeScanTimer = null;
+
         this.init();
     }
 
@@ -375,6 +383,70 @@ class VirtualBookshelf {
         if (deselectAllBtn) {
             deselectAllBtn.addEventListener('click', () => this.deselectAllBooks());
         }
+
+        // Add-book modal (tabs / search / barcode)
+        this.setupAddBookListeners();
+
+        // GitHub sync
+        this.setupGitHubSyncListeners();
+    }
+
+    /**
+     * 本追加モーダルのタブ・検索・バーコード関連のイベント設定
+     */
+    setupAddBookListeners() {
+        document.querySelectorAll('.add-book-tab').forEach(tab => {
+            tab.addEventListener('click', () => this.switchAddBookTab(tab.dataset.tab));
+        });
+
+        const searchBtn = document.getElementById('book-search-btn');
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => this.searchBooksForAdd());
+        }
+
+        const searchInput = document.getElementById('book-search-query');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.searchBooksForAdd();
+                }
+            });
+        }
+
+        const barcodeStart = document.getElementById('barcode-start');
+        if (barcodeStart) {
+            barcodeStart.addEventListener('click', () => this.startBarcodeScan());
+        }
+
+        const barcodeStop = document.getElementById('barcode-stop');
+        if (barcodeStop) {
+            barcodeStop.addEventListener('click', () => this.stopBarcodeScan());
+        }
+    }
+
+    /**
+     * GitHub同期関連のイベント設定
+     */
+    setupGitHubSyncListeners() {
+        const bind = (id, handler) => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('click', handler);
+        };
+
+        bind('github-save', () => this.saveToGitHub());
+        bind('github-load', () => this.loadFromGitHub());
+        bind('github-settings', () => this.showGitHubSettings());
+        bind('github-settings-modal-close', () => this.closeGitHubSettings());
+        bind('github-save-settings', () => this.saveGitHubSettings());
+        bind('github-test-connection', () => this.testGitHubConnection());
+        bind('github-oauth-signin', () => this.githubOAuthSignIn());
+        bind('github-signout', () => {
+            this.githubSync.clearToken();
+            const tokenInput = document.getElementById('github-token');
+            if (tokenInput) tokenInput.value = '';
+            this.showStatusMessage('github-settings-status', 'success', '✅ トークンを削除しました');
+        });
     }
 
     setView(view) {
@@ -955,6 +1027,8 @@ class VirtualBookshelf {
                                 <button class="btn btn-primary edit-mode-btn" data-asin="${book.asin}" style="margin-left: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;">✏️ 編集</button>
                             </div>
                             <p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>著者:</strong> ${book.authors}</p>
+                            ${book.format ? `<p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>形式:</strong> ${this.formatLabel(book.format)}</p>` : ''}
+                            ${book.publisher ? `<p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>出版社:</strong> ${book.publisher}</p>` : ''}
                             <p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>購入日:</strong> ${new Date(book.acquiredTime).toLocaleDateString('ja-JP')}</p>
                             <p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>ASIN:</strong> ${book.asin}</p>
                             ${book.updatedAsin ? `<p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>変更後ASIN:</strong> ${book.updatedAsin}</p>` : ''}
@@ -971,6 +1045,16 @@ class VirtualBookshelf {
                             <div class="edit-field">
                                 <label>📅 購入日</label>
                                 <input type="date" class="edit-acquired-time" data-asin="${book.asin}" value="${new Date(book.acquiredTime).toISOString().split('T')[0]}" />
+                            </div>
+                            <div class="edit-field">
+                                <label>📚 形式</label>
+                                <select class="edit-format" data-asin="${book.asin}">
+                                    <option value="" ${!book.format ? 'selected' : ''}>未設定</option>
+                                    <option value="paper" ${book.format === 'paper' ? 'selected' : ''}>📕 紙の本</option>
+                                    <option value="kindle" ${book.format === 'kindle' ? 'selected' : ''}>📱 Kindle</option>
+                                    <option value="epub" ${book.format === 'epub' ? 'selected' : ''}>📗 EPUB</option>
+                                    <option value="pdf" ${book.format === 'pdf' ? 'selected' : ''}>📄 PDF</option>
+                                </select>
                             </div>
                             <div class="edit-field">
                                 <label>🔖 オリジナルASIN</label>
@@ -1327,6 +1411,7 @@ class VirtualBookshelf {
 
     saveUserData() {
         localStorage.setItem('virtualBookshelf_userData', JSON.stringify(this.userData));
+        this.markDirty();
     }
 
     // exportUserData function removed - replaced with exportUnifiedData
@@ -1827,12 +1912,13 @@ class VirtualBookshelf {
         try {
             const results = await this.bookManager.importSelectedBooks(selectedBooks);
             this.showImportResults(results);
-            
+
             // 表示を更新
             this.books = this.bookManager.getAllBooks();
             this.applyFilters();
             this.updateStats();
-            
+            this.markDirty();
+
             // 選択UIを非表示
             document.getElementById('book-selection').style.display = 'none';
             
@@ -1858,6 +1944,7 @@ class VirtualBookshelf {
         const acquiredTimeInput = document.querySelector(`.edit-acquired-time[data-asin="${asin}"]`);
         const originalAsinInput = document.querySelector(`.edit-original-asin[data-asin="${asin}"]`);
         const updatedAsinInput = document.querySelector(`.edit-updated-asin[data-asin="${asin}"]`);
+        const formatSelect = document.querySelector(`.edit-format[data-asin="${asin}"]`);
 
         const newTitle = titleInput.value.trim();
         const newAuthors = authorsInput.value.trim();
@@ -1907,6 +1994,11 @@ class VirtualBookshelf {
                 updateData.acquiredTime = new Date(newAcquiredTime).getTime();
             }
 
+            // 形式の更新（未設定の場合はプロパティを削除）
+            if (formatSelect) {
+                updateData.format = formatSelect.value || undefined;
+            }
+
             // 変更後ASINの処理
             if (newUpdatedAsin) {
                 updateData.updatedAsin = newUpdatedAsin;
@@ -1931,6 +2023,7 @@ class VirtualBookshelf {
                 this.books = this.bookManager.getAllBooks();
                 this.applyFilters();
                 this.updateStats();
+                this.markDirty();
 
                 alert('✅ 本の情報を更新しました');
 
@@ -2153,6 +2246,267 @@ class VirtualBookshelf {
             resultsDiv.style.display = 'none';
             resultsDiv.innerHTML = '';
         }
+
+        // 検索結果をリセット
+        const searchResults = document.getElementById('book-search-results');
+        if (searchResults) searchResults.innerHTML = '';
+        const searchInput = document.getElementById('book-search-query');
+        if (searchInput) searchInput.value = '';
+
+        // バーコードスキャンを停止
+        this.stopBarcodeScan();
+    }
+
+    /**
+     * 本追加モーダルのタブを切り替え
+     */
+    switchAddBookTab(tabName) {
+        document.querySelectorAll('.add-book-tab').forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.tab === tabName);
+        });
+        ['search', 'code', 'barcode'].forEach(name => {
+            const pane = document.getElementById(`add-book-pane-${name}`);
+            if (pane) pane.style.display = name === tabName ? '' : 'none';
+        });
+        if (tabName !== 'barcode') {
+            this.stopBarcodeScan();
+        }
+    }
+
+    /**
+     * 追加モーダルで選択されている本の形式を取得（自動判定対応）
+     */
+    getSelectedFormat(identifier) {
+        const select = document.getElementById('add-book-format');
+        const value = select ? select.value : 'auto';
+        if (value === 'auto') {
+            return this.bookManager.guessFormat(identifier);
+        }
+        return value;
+    }
+
+    /**
+     * 形式の表示ラベル
+     */
+    formatLabel(format) {
+        const labels = {
+            paper: '📕 紙の本',
+            kindle: '📱 Kindle',
+            epub: '📗 EPUB',
+            pdf: '📄 PDF'
+        };
+        return labels[format] || '';
+    }
+
+    /**
+     * ステータスメッセージの汎用表示（asin-status系のスタイルを流用）
+     */
+    showStatusMessage(elementId, type, message) {
+        const statusDiv = document.getElementById(elementId);
+        if (!statusDiv) return;
+        statusDiv.className = `asin-status ${type}`;
+        statusDiv.textContent = message;
+        statusDiv.style.display = 'block';
+
+        if (type === 'success' || type === 'error') {
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 8000);
+        }
+    }
+
+    /**
+     * タイトル・著者キーワードで書籍を検索して候補を表示
+     */
+    async searchBooksForAdd() {
+        const input = document.getElementById('book-search-query');
+        const resultsDiv = document.getElementById('book-search-results');
+        const searchBtn = document.getElementById('book-search-btn');
+        const query = input.value.trim();
+
+        if (!query) {
+            this.showStatusMessage('book-search-status', 'error', '検索キーワードを入力してください');
+            return;
+        }
+
+        this.showStatusMessage('book-search-status', 'loading', '🔍 検索中...');
+        searchBtn.disabled = true;
+        resultsDiv.innerHTML = '';
+
+        try {
+            const results = await this.bookManager.searchBooksByKeyword(query);
+
+            if (results.length === 0) {
+                this.showStatusMessage('book-search-status', 'error', '❌ 見つかりませんでした。キーワードを変えるか、ISBN/ASINで追加してください。');
+                return;
+            }
+
+            document.getElementById('book-search-status').style.display = 'none';
+            this.renderBookSearchResults(results);
+        } catch (error) {
+            console.error('書籍検索エラー:', error);
+            this.showStatusMessage('book-search-status', 'error', `❌ 検索に失敗しました: ${error.message}`);
+        } finally {
+            searchBtn.disabled = false;
+        }
+    }
+
+    /**
+     * 検索候補リストを描画
+     */
+    renderBookSearchResults(results) {
+        const resultsDiv = document.getElementById('book-search-results');
+
+        resultsDiv.innerHTML = results.map((result, index) => {
+            const exists = result.identifier && this.books.some(book =>
+                book.asin === result.identifier || book.updatedAsin === result.identifier
+            );
+            const meta = [
+                result.authors,
+                result.publisher,
+                result.publishedDate ? `(${result.publishedDate})` : ''
+            ].filter(v => v).join(' / ');
+
+            return `
+                <div class="book-search-result">
+                    ${result.thumbnail ?
+                        `<img class="book-search-thumb" src="${this.escapeHtml(result.thumbnail)}" alt="" loading="lazy">` :
+                        '<div class="book-search-thumb-placeholder">📖</div>'
+                    }
+                    <div class="book-search-result-info">
+                        <div class="book-search-result-title">${this.escapeHtml(result.title)}</div>
+                        <div class="book-search-result-meta">${this.escapeHtml(meta)}</div>
+                        ${result.identifier ?
+                            `<div class="book-search-result-isbn">ISBN: ${result.identifier}</div>` :
+                            '<div class="book-search-result-isbn no-isbn">ISBN情報なし（「ASIN / ISBN」タブから追加してください）</div>'
+                        }
+                    </div>
+                    <button class="btn btn-small ${exists ? 'btn-secondary' : 'btn-primary'} book-search-add"
+                            data-index="${index}" ${(!result.identifier || exists) ? 'disabled' : ''}>
+                        ${exists ? '追加済み' : '➕ 追加'}
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        resultsDiv.querySelectorAll('.book-search-add').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const result = results[parseInt(btn.dataset.index)];
+                this.addBookFromSearchResult(result, btn);
+            });
+        });
+    }
+
+    /**
+     * 検索候補から書籍を追加
+     */
+    async addBookFromSearchResult(result, btn) {
+        btn.disabled = true;
+        btn.textContent = '追加中...';
+
+        try {
+            const bookData = {
+                asin: result.identifier,
+                title: result.title,
+                authors: result.authors || '著者未設定',
+                acquiredTime: Date.now(),
+                readStatus: 'UNKNOWN',
+                format: this.getSelectedFormat(result.identifier),
+                ...(result.thumbnail && { productImage: result.thumbnail }),
+                ...(result.publisher && { publisher: result.publisher }),
+                ...(result.publishedDate && { publishedDate: result.publishedDate })
+            };
+
+            const newBook = await this.bookManager.addBookManually(bookData);
+            btn.textContent = '✅ 追加済み';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-secondary');
+            this.showAddBookSuccess(newBook);
+
+            this.books = this.bookManager.getAllBooks();
+            this.applyFilters();
+            this.updateStats();
+            this.markDirty();
+        } catch (error) {
+            console.error('追加エラー:', error);
+            btn.disabled = false;
+            btn.textContent = '➕ 追加';
+            alert(`❌ 追加に失敗しました: ${error.message}`);
+        }
+    }
+
+    /**
+     * バーコードスキャンを開始（紙の本のISBNバーコード読み取り）
+     */
+    async startBarcodeScan() {
+        if (!('BarcodeDetector' in window)) {
+            this.showStatusMessage('barcode-status', 'error',
+                '❌ このブラウザはバーコード読み取り非対応です（Chrome/Edge推奨）。ISBNを直接入力してください。');
+            return;
+        }
+
+        const video = document.getElementById('barcode-video');
+
+        try {
+            this.barcodeDetector = new BarcodeDetector({ formats: ['ean_13'] });
+            this.barcodeStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment' }
+            });
+            video.srcObject = this.barcodeStream;
+            video.style.display = 'block';
+            await video.play();
+
+            document.getElementById('barcode-start').style.display = 'none';
+            document.getElementById('barcode-stop').style.display = '';
+            this.showStatusMessage('barcode-status', 'loading', '📷 バーコードを探しています…（978で始まる上段のバーコード）');
+
+            this.barcodeScanTimer = setInterval(async () => {
+                try {
+                    const codes = await this.barcodeDetector.detect(video);
+                    for (const code of codes) {
+                        // ISBNは978/979始まり。下段の書籍JAN(191/192始まり)は無視する
+                        if (/^97[89]\d{10}$/.test(code.rawValue)) {
+                            const isbn = code.rawValue;
+                            this.stopBarcodeScan();
+                            this.showStatusMessage('barcode-status', 'success', `✅ ISBNを読み取りました: ${isbn}`);
+                            document.getElementById('manual-asin').value = isbn;
+                            this.switchAddBookTab('code');
+                            this.fetchBookInfoFromASIN();
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    // フレーム単位の検出エラーは無視して継続
+                }
+            }, 300);
+        } catch (error) {
+            console.error('カメラ起動エラー:', error);
+            this.showStatusMessage('barcode-status', 'error', `❌ カメラを起動できませんでした: ${error.message}`);
+        }
+    }
+
+    /**
+     * バーコードスキャンを停止
+     */
+    stopBarcodeScan() {
+        if (this.barcodeScanTimer) {
+            clearInterval(this.barcodeScanTimer);
+            this.barcodeScanTimer = null;
+        }
+        if (this.barcodeStream) {
+            this.barcodeStream.getTracks().forEach(track => track.stop());
+            this.barcodeStream = null;
+        }
+        const video = document.getElementById('barcode-video');
+        if (video) {
+            video.pause();
+            video.srcObject = null;
+            video.style.display = 'none';
+        }
+        const startBtn = document.getElementById('barcode-start');
+        if (startBtn) startBtn.style.display = '';
+        const stopBtn = document.getElementById('barcode-stop');
+        if (stopBtn) stopBtn.style.display = 'none';
     }
 
     /**
@@ -2209,7 +2563,16 @@ class VirtualBookshelf {
         const statusDiv = document.getElementById('asin-status');
         const fetchBtn = document.getElementById('fetch-book-info');
 
-        const asin = asinInput.value.trim();
+        let asin = asinInput.value.trim();
+
+        // AmazonのURLが貼り付けられた場合はASINを抽出
+        if (/amazon\./i.test(asin)) {
+            const extracted = this.bookManager.extractASINFromUrl(asin);
+            if (extracted) {
+                asin = extracted;
+                asinInput.value = extracted;
+            }
+        }
 
         if (!asin) {
             this.showASINStatus('error', 'ASINを入力してください');
@@ -2275,9 +2638,18 @@ class VirtualBookshelf {
      * 手動入力で書籍を追加
      */
     async addBookManually() {
-        const asin = document.getElementById('manual-asin').value.trim();
+        let asin = document.getElementById('manual-asin').value.trim();
         const title = document.getElementById('manual-title').value.trim();
         const authors = document.getElementById('manual-authors').value.trim();
+
+        // AmazonのURLが貼り付けられた場合はASINを抽出
+        if (/amazon\./i.test(asin)) {
+            const extracted = this.bookManager.extractASINFromUrl(asin);
+            if (extracted) {
+                asin = extracted;
+                document.getElementById('manual-asin').value = extracted;
+            }
+        }
 
         if (!asin) {
             alert('📝 ASINを入力してください');
@@ -2295,17 +2667,19 @@ class VirtualBookshelf {
                 title: title,
                 authors: authors || '著者未設定',
                 readStatus: 'UNKNOWN',
-                acquiredTime: Date.now()
+                acquiredTime: Date.now(),
+                format: this.getSelectedFormat(asin)
             };
 
             const newBook = await this.bookManager.addBookManually(bookData);
             this.showAddBookSuccess(newBook);
-            
+
             // 表示を更新
             this.books = this.bookManager.getAllBooks();
             this.applyFilters();
             this.updateStats();
-            
+            this.markDirty();
+
         } catch (error) {
             console.error('追加エラー:', error);
             alert(`❌ 追加に失敗しました: ${error.message}`);
@@ -2331,12 +2705,9 @@ class VirtualBookshelf {
     }
 
     /**
-     * 蔵書データをエクスポート
+     * 現在の状態から library.json 形式の統合データを構築
      */
-    exportUnifiedData() {
-        console.log('📦 エクスポート開始...');
-        
-        // 既存のlibrary.jsonを読み込み、現在のデータと統合
+    buildUnifiedData() {
         const exportData = {
             exportDate: new Date().toISOString(),
             books: {}, // 後で設定
@@ -2352,11 +2723,10 @@ class VirtualBookshelf {
             },
             version: '2.0'
         };
-        
-        // 現在表示されている書籍データをbooks形式に変換
+
+        // 現在の書籍データをbooks形式に変換
         const books = {};
         if (this.books && this.books.length > 0) {
-            console.log(`📚 ${this.books.length}冊の書籍データを処理中...`);
             this.books.forEach(book => {
                 const asin = book.asin;
                 if (asin) {
@@ -2370,18 +2740,31 @@ class VirtualBookshelf {
                         addedDate: book.addedDate || Date.now(),
                         memo: this.userData.notes?.[asin]?.memo || '',
                         rating: this.userData.notes?.[asin]?.rating || 0,
-                        // updatedAsinフィールドも含める
-                        ...(book.updatedAsin && book.updatedAsin.trim() !== '' && { updatedAsin: book.updatedAsin })
+                        // オプションフィールドも含める
+                        ...(book.updatedAsin && book.updatedAsin.trim() !== '' && { updatedAsin: book.updatedAsin }),
+                        ...(book.format && { format: book.format }),
+                        ...(book.publisher && { publisher: book.publisher }),
+                        ...(book.publishedDate && { publishedDate: book.publishedDate })
                     };
                 }
             });
         }
-        
+
         exportData.books = books;
         exportData.stats.totalBooks = Object.keys(books).length;
-        
+        return exportData;
+    }
+
+    /**
+     * 蔵書データをファイルとしてエクスポート
+     */
+    exportUnifiedData() {
+        console.log('📦 エクスポート開始...');
+
+        const exportData = this.buildUnifiedData();
+
         console.log(`📊 エクスポートデータ: ${exportData.stats.totalBooks}冊, ${exportData.stats.notesCount}メモ`);
-        
+
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -2391,8 +2774,216 @@ class VirtualBookshelf {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        
+
         alert('📦 library.json をエクスポートしました！');
+    }
+
+    /**
+     * 未保存の変更マークを付ける（GitHub保存ボタンにインジケーター表示）
+     */
+    markDirty() {
+        this.hasUnsavedChanges = true;
+        const saveBtn = document.getElementById('github-save');
+        if (saveBtn) saveBtn.classList.add('has-unsaved');
+    }
+
+    clearDirty() {
+        this.hasUnsavedChanges = false;
+        const saveBtn = document.getElementById('github-save');
+        if (saveBtn) saveBtn.classList.remove('has-unsaved');
+    }
+
+    /**
+     * 現在の蔵書データをGitHubリポジトリに直接コミット
+     */
+    async saveToGitHub() {
+        if (!this.githubSync.isReady()) {
+            this.showStatusMessage('github-sync-status', 'error', '⚙️ 先にGitHub連携設定を行ってください');
+            this.showGitHubSettings();
+            return;
+        }
+
+        const btn = document.getElementById('github-save');
+        btn.disabled = true;
+        this.showStatusMessage('github-sync-status', 'loading', '☁️ GitHubに保存中...');
+
+        try {
+            const exportData = this.buildUnifiedData();
+            const content = JSON.stringify(exportData, null, 2);
+            const message = `蔵書データを更新 (${exportData.stats.totalBooks}冊)`;
+
+            // exportDate以外に差分がなければコミットしない
+            const existing = await this.githubSync.getFile();
+            if (existing) {
+                try {
+                    const normalize = (data) => JSON.stringify({ ...data, exportDate: null });
+                    if (normalize(JSON.parse(existing.content)) === normalize(exportData)) {
+                        this.showStatusMessage('github-sync-status', 'success', '✅ GitHub上のデータと同一のため、コミットは不要でした');
+                        this.clearDirty();
+                        return;
+                    }
+                } catch (error) {
+                    // リモートのJSONが壊れている場合は比較をスキップして上書き
+                }
+            }
+
+            await this.githubSync.commitFile(content, message);
+            this.showStatusMessage('github-sync-status', 'success', `✅ GitHubに保存しました（${exportData.stats.totalBooks}冊）`);
+            this.clearDirty();
+        } catch (error) {
+            console.error('GitHub保存エラー:', error);
+            this.showStatusMessage('github-sync-status', 'error', `❌ ${error.message}`);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    /**
+     * GitHubリポジトリ上の library.json を読み込んでローカルに反映
+     */
+    async loadFromGitHub() {
+        if (!this.githubSync.isReady()) {
+            this.showStatusMessage('github-sync-status', 'error', '⚙️ 先にGitHub連携設定を行ってください');
+            this.showGitHubSettings();
+            return;
+        }
+
+        if (this.hasUnsavedChanges) {
+            const proceed = confirm('⚠️ 未保存の変更があります。\nGitHub上のデータで上書きすると、この変更は失われます。\n\n続行しますか？');
+            if (!proceed) return;
+        }
+
+        this.showStatusMessage('github-sync-status', 'loading', '🔄 GitHubから読み込み中...');
+
+        try {
+            const file = await this.githubSync.getFile();
+            if (!file) {
+                this.showStatusMessage('github-sync-status', 'error', '❌ GitHub上に library.json が見つかりません');
+                return;
+            }
+
+            const libraryData = JSON.parse(file.content);
+            this.applyUnifiedData(libraryData);
+
+            // 再読み込みして反映
+            window.location.reload();
+        } catch (error) {
+            console.error('GitHub読込エラー:', error);
+            this.showStatusMessage('github-sync-status', 'error', `❌ ${error.message}`);
+        }
+    }
+
+    /**
+     * 統合データ（library.json形式）をLocalStorageに反映
+     */
+    applyUnifiedData(libraryData) {
+        // BookManager用のライブラリ形式に変換
+        const books = Object.entries(libraryData.books || {}).map(([asin, book]) => ({
+            ...book,
+            asin: asin
+        }));
+
+        const library = {
+            books: books,
+            metadata: {
+                totalBooks: books.length,
+                manuallyAdded: books.filter(b => b.source === 'manual_add').length,
+                importedFromKindle: books.filter(b => b.source === 'kindle_import').length,
+                lastImportDate: libraryData.exportDate || null
+            }
+        };
+        localStorage.setItem('virtualBookshelf_library', JSON.stringify(library));
+
+        // ユーザーデータ形式に変換
+        const userData = {
+            exportDate: libraryData.exportDate || new Date().toISOString(),
+            bookshelves: libraryData.bookshelves || [],
+            notes: {},
+            settings: libraryData.settings || this.getDefaultSettings(),
+            bookOrder: libraryData.bookOrder || {},
+            stats: libraryData.stats || { totalBooks: books.length, notesCount: 0 },
+            version: libraryData.version || '2.0'
+        };
+        Object.entries(libraryData.books || {}).forEach(([asin, book]) => {
+            if (book.memo || book.rating) {
+                userData.notes[asin] = {
+                    memo: book.memo || '',
+                    rating: book.rating || 0
+                };
+            }
+        });
+        localStorage.setItem('virtualBookshelf_userData', JSON.stringify(userData));
+    }
+
+    /**
+     * GitHub連携設定モーダルを表示
+     */
+    showGitHubSettings() {
+        const config = this.githubSync.config;
+        document.getElementById('github-owner').value = config.owner || '';
+        document.getElementById('github-repo').value = config.repo || '';
+        document.getElementById('github-branch').value = config.branch || 'main';
+        document.getElementById('github-auth-endpoint').value = config.authEndpoint || '';
+        document.getElementById('github-token').value = this.githubSync.getToken();
+
+        document.getElementById('github-settings-modal').classList.add('show');
+    }
+
+    closeGitHubSettings() {
+        document.getElementById('github-settings-modal').classList.remove('show');
+    }
+
+    /**
+     * フォームの内容をGitHub設定に反映
+     */
+    applyGitHubSettingsForm() {
+        this.githubSync.saveConfig({
+            owner: document.getElementById('github-owner').value.trim(),
+            repo: document.getElementById('github-repo').value.trim(),
+            branch: document.getElementById('github-branch').value.trim() || 'main',
+            authEndpoint: document.getElementById('github-auth-endpoint').value.trim()
+        });
+        this.githubSync.setToken(document.getElementById('github-token').value.trim());
+    }
+
+    saveGitHubSettings() {
+        this.applyGitHubSettingsForm();
+        this.showStatusMessage('github-settings-status', 'success', '✅ 設定を保存しました');
+    }
+
+    /**
+     * GitHub接続テスト
+     */
+    async testGitHubConnection() {
+        this.applyGitHubSettingsForm();
+        this.showStatusMessage('github-settings-status', 'loading', '🔌 接続を確認中...');
+
+        try {
+            const result = await this.githubSync.verifyAccess();
+            if (result.canPush) {
+                this.showStatusMessage('github-settings-status', 'success', `✅ ${result.fullName} に書き込み可能です`);
+            } else {
+                this.showStatusMessage('github-settings-status', 'error', `⚠️ ${result.fullName} への書き込み権限がありません（トークンのContents権限を確認してください）`);
+            }
+        } catch (error) {
+            this.showStatusMessage('github-settings-status', 'error', `❌ ${error.message}`);
+        }
+    }
+
+    /**
+     * OAuth（Sveltia/Decap互換エンドポイント）でサインイン
+     */
+    async githubOAuthSignIn() {
+        this.applyGitHubSettingsForm();
+        this.showStatusMessage('github-settings-status', 'loading', '🔐 ポップアップで認証中...');
+
+        try {
+            const token = await this.githubSync.signInWithOAuth();
+            document.getElementById('github-token').value = token;
+            this.showStatusMessage('github-settings-status', 'success', '✅ サインインしました');
+        } catch (error) {
+            this.showStatusMessage('github-settings-status', 'error', `❌ ${error.message}`);
+        }
     }
 
     /**

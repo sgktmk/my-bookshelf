@@ -29,13 +29,15 @@ php -S localhost:8000
 
 #### 主要コンポーネント
 - **VirtualBookshelf** (`js/bookshelf.js`): メインアプリケーションクラス、UI制御とビジネスロジック
-- **BookManager** (`js/book-manager.js`): 蔵書のCRUD操作（作成・読み込み・更新・削除）
+- **BookManager** (`js/book-manager.js`): 蔵書のCRUD操作（作成・読み込み・更新・削除）、書誌情報の自動取得（OpenBD / Google Books）
+- **GitHubSync** (`js/github-sync.js`): GitHub Contents API経由での`data/library.json`直接コミット・読込。Fine-grained PAT認証とSveltia/Decap互換OAuth認証に対応
 - **HighlightsManager** (`js/highlights.js`): Kindleハイライトの表示と管理
 
 #### データ永続化戦略
 1. **ブラウザのLocalStorage**: ユーザーの設定、星評価、メモ、本棚カスタマイズを保存
 2. **GitHubリポジトリファイル**: 永続化用データ（`data/library.json`）
 3. **ハイブリッド読み込み**: LocalStorage優先、フォールバックとしてファイル読み込み
+4. **GitHub直接保存**: 「☁️ GitHubに保存」でブラウザからContents APIで直接コミット（エクスポート＆手動push不要）。「🔄 GitHubから読込」でリポジトリの最新データをLocalStorageに反映
 
 #### コアデータファイル
 - `data/library.json`: 統合蔵書データ（本の情報 + ユーザーデータ）
@@ -48,10 +50,13 @@ php -S localhost:8000
 3. ユーザー設定データをLocalStorageから復元、なければファイル読み込み
 4. `HighlightsManager` を初期化してハイライト機能を有効化
 
-### データエクスポート・インポート機能
+### 蔵書の登録手段（自動補完優先）
+- **タイトル・著者検索**: Google Books APIで候補検索、ワンクリック登録（`BookManager.searchBooksByKeyword`）
+- **バーコードスキャン**: BarcodeDetector APIでISBNバーコード（EAN-13、978/979始まり）を読み取り自動取得
+- **ASIN / ISBN / AmazonURL入力**: OpenBD（ISBN優先）→ Google Books の順で書誌情報を自動取得。AmazonのURLからはASINを自動抽出
 - **Kindleデータインポート**: [Kindle Bookshelf Exporter](https://chromewebstore.google.com/detail/kindle-bookshelf-exporter/olimpmeljimffgjonlpmiaebaonnegdp)でエクスポートしたJSONファイルを取り込み
-- **手動蔵書追加**: ASIN、タイトル、著者を手動入力して蔵書に追加
-- **設定エクスポート**: LocalStorageのデータを`library.json`としてダウンロード
+- **形式フィールド**: 各書籍に`format`（paper / kindle / epub / pdf）を保持。自動判定はISBN→paper、B始まりASIN→kindle
+- **設定エクスポート**: LocalStorageのデータを`library.json`としてダウンロード（GitHub直接保存の代替手段）
 
 ### 本棚管理システム
 - 複数の本棚を作成してテーマ別にキュレーション
