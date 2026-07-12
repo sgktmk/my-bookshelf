@@ -30,7 +30,7 @@ php -S localhost:8000
 #### 主要コンポーネント
 - **VirtualBookshelf** (`js/bookshelf.js`): メインアプリケーションクラス、UI制御とビジネスロジック
 - **BookManager** (`js/book-manager.js`): 蔵書のCRUD操作（作成・読み込み・更新・削除）、書誌情報の自動取得（OpenBD / Google Books）
-- **GitHubSync** (`js/github-sync.js`): GitHub Contents API経由での`data/library.json`直接コミット・読込。Fine-grained PAT認証とSveltia/Decap互換OAuth認証に対応
+- **GitHubSync** (`js/github-sync.js`): GitHub Contents API経由での`data/library.json`直接コミット・読込。Sveltia CMSと同じ構成（設定は`data/config.json`の`github`ブロック＝config.yml相当、認証はSveltia/Decap互換OAuthポップアップ、フォールバックとしてFine-grained PAT）
 - **HighlightsManager** (`js/highlights.js`): Kindleハイライトの表示と管理
 
 #### データ永続化戦略
@@ -41,7 +41,7 @@ php -S localhost:8000
 
 #### コアデータファイル
 - `data/library.json`: 統合蔵書データ（本の情報 + ユーザーデータ）
-- `data/config.json`: アフィリエイトIDなどのグローバル設定
+- `data/config.json`: アフィリエイトID、GitHub同期設定（`github`ブロック: owner/repo/branch/authEndpoint）
 - `data/highlights-index.json`: ハイライトファイルのASINマッピング（自動生成）
 
 ### 初期化フロー

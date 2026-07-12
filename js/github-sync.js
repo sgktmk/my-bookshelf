@@ -1,34 +1,33 @@
 /**
  * GitHubSync - GitHub Contents API 経由で library.json を直接読み書きするクラス
  *
- * 認証方法は2通り:
- * 1. Fine-grained Personal Access Token (PAT) を貼り付け
- *    - 対象リポジトリのみ / Contents: Read and write 権限を推奨
- * 2. Sveltia CMS / Decap CMS 互換の OAuth 認証エンドポイント経由のサインイン
- *    - 例: sveltia-cms-auth (Cloudflare Workers) のデプロイ先URLを設定
+ * Sveltia CMS と同じ構成を採用:
+ * - リポジトリやOAuthエンドポイントの設定は data/config.json の `github` ブロックに記載
+ *   （Sveltiaのconfig.ymlに相当。ブラウザ上で設定を入力する必要はない）
+ * - 認証は Sveltia/Decap CMS 互換の OAuth ポップアップフロー
+ *   authEndpoint には認証エンドポイントの完全なURLを指定する:
+ *   - ブログのNext.js APIルート流用: https://www.sgktmk.com/api/auth
+ *   - sveltia-cms-auth Worker の場合:  https://xxx.workers.dev/auth
+ * - OAuthを使わない場合のフォールバックとして Fine-grained PAT の貼り付けにも対応
  *
- * トークンと設定はブラウザの LocalStorage に保存される（このブラウザ内のみ）。
+ * トークンのみブラウザの LocalStorage に保存される（このブラウザ内のみ）。
  */
 class GitHubSync {
     constructor() {
-        this.CONFIG_KEY = 'virtualBookshelf_githubConfig';
         this.TOKEN_KEY = 'virtualBookshelf_githubToken';
-        this.config = this.loadConfig();
+        this.config = this.getDefaultConfig();
     }
 
     /**
-     * 設定を読み込み（無ければホスト名から推測したデフォルト値）
+     * data/config.json の github ブロックを反映（値があるものだけ上書き）
      */
-    loadConfig() {
-        try {
-            const saved = localStorage.getItem(this.CONFIG_KEY);
-            if (saved) {
-                return { ...this.getDefaultConfig(), ...JSON.parse(saved) };
+    applyRepoConfig(githubConfig) {
+        if (!githubConfig) return;
+        ['owner', 'repo', 'branch', 'filePath', 'authEndpoint'].forEach(key => {
+            if (githubConfig[key]) {
+                this.config[key] = githubConfig[key];
             }
-        } catch (error) {
-            console.warn('GitHub設定の読み込みに失敗:', error);
-        }
-        return this.getDefaultConfig();
+        });
     }
 
     /**
@@ -60,11 +59,6 @@ class GitHubSync {
         };
     }
 
-    saveConfig(updates) {
-        this.config = { ...this.config, ...updates };
-        localStorage.setItem(this.CONFIG_KEY, JSON.stringify(this.config));
-    }
-
     getToken() {
         return localStorage.getItem(this.TOKEN_KEY) || '';
     }
@@ -90,7 +84,7 @@ class GitHubSync {
 
     /**
      * Sveltia / Decap CMS 互換のOAuthポップアップフローでサインイン
-     * (authEndpoint には sveltia-cms-auth 等のデプロイURLを設定)
+     * (authEndpoint には認証エンドポイントの完全なURLを設定。例: https://www.sgktmk.com/api/auth)
      */
     signInWithOAuth() {
         return new Promise((resolve, reject) => {
@@ -100,7 +94,7 @@ class GitHubSync {
                 return;
             }
 
-            const url = `${endpoint}/auth?provider=github&site_id=${encodeURIComponent(window.location.hostname)}&scope=repo`;
+            const url = `${endpoint}?provider=github&site_id=${encodeURIComponent(window.location.hostname)}&scope=repo`;
             const popup = window.open(url, 'github-oauth', 'width=600,height=800,popup=1');
             if (!popup) {
                 reject(new Error('ポップアップがブロックされました。ポップアップを許可してください。'));

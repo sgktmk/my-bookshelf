@@ -50,27 +50,31 @@ body {
 .header {
     background: linear-gradient(135deg, var(--primary-color), #34495e);
     color: white;
-    padding: 2rem 0;
+    padding: 2.5rem 0 2rem;
     box-shadow: 0 2px 10px var(--shadow-color);
 }
 
 .header-title {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     margin-bottom: 0.5rem;
     text-align: center;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
 }
 
 .header-subtitle {
     text-align: center;
-    opacity: 0.9;
+    opacity: 0.85;
     margin-bottom: 2rem;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
 }
 
 .header-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem 2rem;
     flex-wrap: wrap;
 }
 
@@ -95,11 +99,12 @@ body {
 
 /* Button Styles */
 .btn {
-    padding: 0.5rem 1rem;
+    padding: 0.55rem 1.1rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 0.9rem;
+    line-height: 1.5;
     transition: all 0.3s ease;
     font-family: inherit;
 }
@@ -131,11 +136,12 @@ body {
 
 /* Main Layout */
 .main {
-    padding: 2rem 0;
+    padding: 2.5rem 0;
     min-height: calc(100vh - 200px);
 }
 
-.container {
+/* サイドバー＋本棚の2カラムはメイン領域のみ（ヘッダー・フッターには適用しない） */
+.main .container {
     display: flex;
     gap: 2rem;
 }
@@ -148,35 +154,42 @@ body {
 
 .filter-section, .stats-section {
     background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
+    padding: 1.75rem;
+    border-radius: 12px;
     box-shadow: 0 2px 10px var(--shadow-color);
     margin-bottom: 1.5rem;
 }
 
 .filter-section h3, .stats-section h3 {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
     color: var(--primary-color);
     border-bottom: 2px solid var(--border-color);
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.6rem;
+    font-size: 1.05rem;
+    letter-spacing: 0.03em;
 }
 
 .filter-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
 }
 
 .filter-group label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
     font-weight: 600;
+    font-size: 0.9rem;
     color: var(--text-color);
 }
 
 .filter-group select {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.55rem 0.75rem;
     border: 1px solid var(--border-color);
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 0.9rem;
 }
 
@@ -189,8 +202,8 @@ body {
 .stat-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0;
+    align-items: baseline;
+    padding: 0.6rem 0;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -228,7 +241,7 @@ body {
 /* Bookshelf Grid */
 .bookshelf {
     display: grid;
-    gap: 1.5rem;
+    gap: 2.25rem 1.5rem;
     margin-bottom: 2rem;
 }
 
@@ -301,7 +314,7 @@ body {
 /* Book Info */
 .book-info {
     text-align: center;
-    margin-top: 0.75rem;
+    margin-top: 0.9rem;
     padding: 0 0.5rem;
 }
 
@@ -309,8 +322,8 @@ body {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 0.25rem;
-    line-height: 1.3;
+    margin-bottom: 0.35rem;
+    line-height: 1.45;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -320,6 +333,7 @@ body {
 .book-author {
     font-size: 0.75rem;
     color: #666;
+    line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
@@ -448,14 +462,26 @@ body {
 
 .modal-close {
     position: absolute;
-    top: 15px;
+    top: 16px;
     right: 20px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
-    font-size: 2rem;
+    border-radius: 50%;
+    font-size: 1.75rem;
+    line-height: 1;
     cursor: pointer;
     color: #666;
     z-index: 10;
+    transition: background-color 0.2s ease;
+}
+
+.modal-close:hover {
+    background-color: rgba(0, 0, 0, 0.06);
 }
 
 .modal-body {
@@ -500,10 +526,16 @@ body {
 
 /* Book Links Styles */
 .book-links {
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
     margin-bottom: 0.5rem;
     display: flex;
     gap: 0.5rem;
+    justify-content: center;
+}
+
+/* リスト表示では左寄せ */
+.view-list .book-links {
+    justify-content: flex-start;
 }
 
 .book-link {
@@ -871,9 +903,8 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    padding-right: 60px; /* 閉じるボタンのスペースを確保 */
+    padding: 1.75rem 2rem 1.25rem;
+    padding-right: 64px; /* 閉じるボタンのスペースを確保 */
     border-bottom: 2px solid var(--border-color);
     gap: 1rem;
 }
@@ -881,6 +912,19 @@ body {
 .modal-header h2 {
     margin: 0;
     flex: 1;
+    font-size: 1.4rem;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+}
+
+/* ヘッダー付きモーダルでは本文の上余白を抑える */
+.modal-header ~ .modal-body {
+    padding-top: 1.5rem;
+}
+
+/* 本棚管理モーダルのリスト部分にも余白を確保 */
+#bookshelves-list {
+    padding: 1.5rem 2rem 2rem;
 }
 
 .modal-header .btn {
@@ -1049,14 +1093,15 @@ body {
 .management-buttons {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.6rem;
 }
 
 .management-buttons .btn {
     width: 100%;
     text-align: center;
     font-size: 0.9rem;
-    padding: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
     color: white !important;
     background-color: #3498db;
     border: 1px solid #2980b9;
@@ -2086,4 +2131,97 @@ body {
     max-width: 480px;
     border-radius: 8px;
     background-color: #000;
+}
+
+/* ============================================
+   GitHub Sync (Sveltia-style)
+   ============================================ */
+.github-settings-link {
+    display: block;
+    margin: 0.9rem auto 0;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.github-settings-link:hover {
+    color: var(--secondary-color);
+}
+
+.github-config-summary {
+    background: #f8f9fa;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.github-config-summary dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 1.25rem;
+    margin: 0;
+}
+
+.github-config-summary dt {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    white-space: nowrap;
+}
+
+.github-config-summary dd {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #555;
+    word-break: break-all;
+}
+
+/* ============================================
+   Modal shared parts
+   ============================================ */
+.modal-description {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+}
+
+.modal-description code {
+    background: #f1f3f5;
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+.modal-divider {
+    margin: 1.75rem 0;
+    border: none;
+    border-top: 1px solid var(--border-color);
+}
+
+.modal-body h3 {
+    font-size: 1.05rem;
+    color: var(--primary-color);
+    margin-bottom: 0.9rem;
+    letter-spacing: 0.02em;
+}
+
+.modal-actions {
+    margin-top: 1.75rem;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.field-note {
+    color: #666;
+    display: block;
+    margin-top: 0.4rem;
+    line-height: 1.7;
 }

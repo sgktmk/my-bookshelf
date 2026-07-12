@@ -46,6 +46,7 @@ class VirtualBookshelf {
         try {
             await this.loadData();
             this.setupEventListeners();
+            this.updateGitHubUI();
             this.updateBookshelfSelector();
             this.updateSortDirectionButton();
             this.renderBookshelfOverview();
@@ -133,8 +134,12 @@ class VirtualBookshelf {
             }
         }
         
-        // Merge config into userData settings
-        this.userData.settings = { ...this.userData.settings, ...config };
+        // GitHub同期設定（Sveltiaのconfig.yml相当）を反映
+        this.githubSync.applyRepoConfig(config.github);
+
+        // Merge config into userData settings（githubブロックは同期設定なので含めない）
+        const { github, ...siteConfig } = config;
+        this.userData.settings = { ...this.userData.settings, ...siteConfig };
         
         this.currentView = this.userData.settings.defaultView || 'covers';
         
@@ -434,19 +439,54 @@ class VirtualBookshelf {
             if (el) el.addEventListener('click', handler);
         };
 
+        bind('github-signin', () => this.githubSignIn());
         bind('github-save', () => this.saveToGitHub());
         bind('github-load', () => this.loadFromGitHub());
         bind('github-settings', () => this.showGitHubSettings());
         bind('github-settings-modal-close', () => this.closeGitHubSettings());
         bind('github-save-settings', () => this.saveGitHubSettings());
         bind('github-test-connection', () => this.testGitHubConnection());
-        bind('github-oauth-signin', () => this.githubOAuthSignIn());
         bind('github-signout', () => {
             this.githubSync.clearToken();
             const tokenInput = document.getElementById('github-token');
             if (tokenInput) tokenInput.value = '';
-            this.showStatusMessage('github-settings-status', 'success', '✅ トークンを削除しました');
+            this.updateGitHubUI();
+            this.showStatusMessage('github-settings-status', 'success', '✅ サインアウトしました');
         });
+    }
+
+    /**
+     * サインイン状態に応じてGitHub同期UIを切り替え
+     */
+    updateGitHubUI() {
+        const signedIn = this.githubSync.isReady();
+        const signedOutBlock = document.getElementById('github-signed-out');
+        const signedInBlock = document.getElementById('github-signed-in');
+        if (signedOutBlock) signedOutBlock.style.display = signedIn ? 'none' : '';
+        if (signedInBlock) signedInBlock.style.display = signedIn ? '' : 'none';
+    }
+
+    /**
+     * GitHubサインイン（Sveltia/Decap互換のOAuthポップアップ）
+     * data/config.json の github.authEndpoint を使用。未設定ならPAT設定へ誘導。
+     */
+    async githubSignIn() {
+        if (!this.githubSync.config.authEndpoint) {
+            this.showStatusMessage('github-sync-status', 'error',
+                'OAuth未設定です。data/config.json の github.authEndpoint に認証Worker（sveltia-cms-auth等）のURLを設定するか、詳細設定からPATを登録してください。');
+            this.showGitHubSettings();
+            return;
+        }
+
+        this.showStatusMessage('github-sync-status', 'loading', '🔐 ポップアップで認証中...');
+
+        try {
+            await this.githubSync.signInWithOAuth();
+            this.updateGitHubUI();
+            this.showStatusMessage('github-sync-status', 'success', '✅ サインインしました');
+        } catch (error) {
+            this.showStatusMessage('github-sync-status', 'error', `❌ ${error.message}`);
+        }
     }
 
     setView(view) {
@@ -688,6 +728,7 @@ class VirtualBookshelf {
 
         if (displayType === 'cover' || displayType === 'covers') {
             const amazonUrl = this.bookManager.getAmazonUrl(book, this.userData.settings.affiliateId);
+            const coverCandidates = this.bookManager.getCoverImageCandidates(book);
             bookElement.innerHTML = `
                 <div class="book-cover-container">
                     <div class="book-select-checkbox">
@@ -696,7 +737,7 @@ class VirtualBookshelf {
                     <div class="drag-handle">⋮⋮</div>
                     <a href="${amazonUrl}" target="_blank" rel="noopener noreferrer" class="book-cover-link">
                         ${book.productImage ?
-                            `<img class="book-cover lazy" data-src="${this.escapeHtml(this.bookManager.getProductImageUrl(book))}" alt="${this.escapeHtml(book.title)}">` :
+                            `<img class="book-cover lazy" data-src="${this.escapeHtml(coverCandidates[0])}" data-fallbacks="${this.escapeHtml(coverCandidates.slice(1).join('|'))}" alt="${this.escapeHtml(book.title)}">` :
                             `<div class="book-cover-placeholder">${this.escapeHtml(book.title)}</div>`
                         }
                     </a>
@@ -714,6 +755,7 @@ class VirtualBookshelf {
             `;
         } else {
             const amazonUrl = this.bookManager.getAmazonUrl(book, this.userData.settings.affiliateId);
+            const coverCandidates = this.bookManager.getCoverImageCandidates(book);
             bookElement.innerHTML = `
                 <div class="book-select-checkbox">
                     <input type="checkbox" ${isSelected ? 'checked' : ''} data-asin="${book.asin}">
@@ -722,7 +764,7 @@ class VirtualBookshelf {
                     <div class="drag-handle">⋮⋮</div>
                     <a href="${amazonUrl}" target="_blank" rel="noopener noreferrer" class="book-cover-link">
                         ${book.productImage ?
-                            `<img class="book-cover lazy" data-src="${this.escapeHtml(this.bookManager.getProductImageUrl(book))}" alt="${this.escapeHtml(book.title)}">` :
+                            `<img class="book-cover lazy" data-src="${this.escapeHtml(coverCandidates[0])}" data-fallbacks="${this.escapeHtml(coverCandidates.slice(1).join('|'))}" alt="${this.escapeHtml(book.title)}">` :
                             '<div class="book-cover-placeholder">📖</div>'
                         }
                     </a>
@@ -1013,11 +1055,12 @@ class VirtualBookshelf {
         const userNote = this.userData.notes[book.asin] || { memo: '', rating: 0 };
         const amazonUrl = this.bookManager.getAmazonUrl(book, this.userData.settings.affiliateId);
 
+        const coverCandidates = this.bookManager.getCoverImageCandidates(book);
         modalBody.innerHTML = `
             <div class="book-detail">
                 <div class="book-detail-header">
                     ${book.productImage ?
-                        `<img class="book-detail-cover" src="${this.bookManager.getProductImageUrl(book)}" alt="${book.title}">` :
+                        `<img class="book-detail-cover" src="${this.escapeHtml(coverCandidates[0])}" data-fallbacks="${this.escapeHtml(coverCandidates.slice(1).join('|'))}" alt="${this.escapeHtml(book.title)}">` :
                         '<div class="book-detail-cover-placeholder">📖</div>'
                     }
                     <div class="book-detail-info">
@@ -1146,6 +1189,12 @@ class VirtualBookshelf {
             </div>
         `;
         
+        // 表紙画像のフォールバック
+        const detailCover = modalBody.querySelector('img.book-detail-cover');
+        if (detailCover) {
+            setupCoverFallback(detailCover);
+        }
+
         // Setup modal event listeners
         const noteTextarea = modalBody.querySelector('.note-textarea');
         noteTextarea.addEventListener('blur', (e) => {
@@ -2713,8 +2762,8 @@ class VirtualBookshelf {
             books: {}, // 後で設定
             bookshelves: this.userData.bookshelves || [],
             settings: (() => {
-                const { affiliateId, ...settingsWithoutAffiliateId } = this.userData.settings;
-                return settingsWithoutAffiliateId;
+                const { affiliateId, github, ...cleanSettings } = this.userData.settings;
+                return cleanSettings;
             })(),
             bookOrder: this.userData.bookOrder || {},
             stats: {
@@ -2798,8 +2847,8 @@ class VirtualBookshelf {
      */
     async saveToGitHub() {
         if (!this.githubSync.isReady()) {
-            this.showStatusMessage('github-sync-status', 'error', '⚙️ 先にGitHub連携設定を行ってください');
-            this.showGitHubSettings();
+            this.showStatusMessage('github-sync-status', 'error', '🔐 先にGitHubでサインインしてください');
+            this.githubSignIn();
             return;
         }
 
@@ -2843,8 +2892,8 @@ class VirtualBookshelf {
      */
     async loadFromGitHub() {
         if (!this.githubSync.isReady()) {
-            this.showStatusMessage('github-sync-status', 'error', '⚙️ 先にGitHub連携設定を行ってください');
-            this.showGitHubSettings();
+            this.showStatusMessage('github-sync-status', 'error', '🔐 先にGitHubでサインインしてください');
+            this.githubSignIn();
             return;
         }
 
@@ -2916,16 +2965,21 @@ class VirtualBookshelf {
     }
 
     /**
-     * GitHub連携設定モーダルを表示
+     * GitHub連携の詳細設定モーダルを表示
      */
     showGitHubSettings() {
         const config = this.githubSync.config;
-        document.getElementById('github-owner').value = config.owner || '';
-        document.getElementById('github-repo').value = config.repo || '';
-        document.getElementById('github-branch').value = config.branch || 'main';
-        document.getElementById('github-auth-endpoint').value = config.authEndpoint || '';
+        const summary = document.getElementById('github-config-summary');
+        if (summary) {
+            summary.innerHTML = `
+                <dl>
+                    <dt>リポジトリ</dt><dd>${this.escapeHtml(config.owner && config.repo ? `${config.owner}/${config.repo}` : '未設定')}</dd>
+                    <dt>ブランチ</dt><dd>${this.escapeHtml(config.branch || 'main')}</dd>
+                    <dt>OAuth認証</dt><dd>${config.authEndpoint ? this.escapeHtml(config.authEndpoint) : '未設定（PATを使用）'}</dd>
+                </dl>
+            `;
+        }
         document.getElementById('github-token').value = this.githubSync.getToken();
-
         document.getElementById('github-settings-modal').classList.add('show');
     }
 
@@ -2933,29 +2987,17 @@ class VirtualBookshelf {
         document.getElementById('github-settings-modal').classList.remove('show');
     }
 
-    /**
-     * フォームの内容をGitHub設定に反映
-     */
-    applyGitHubSettingsForm() {
-        this.githubSync.saveConfig({
-            owner: document.getElementById('github-owner').value.trim(),
-            repo: document.getElementById('github-repo').value.trim(),
-            branch: document.getElementById('github-branch').value.trim() || 'main',
-            authEndpoint: document.getElementById('github-auth-endpoint').value.trim()
-        });
-        this.githubSync.setToken(document.getElementById('github-token').value.trim());
-    }
-
     saveGitHubSettings() {
-        this.applyGitHubSettingsForm();
-        this.showStatusMessage('github-settings-status', 'success', '✅ 設定を保存しました');
+        this.githubSync.setToken(document.getElementById('github-token').value.trim());
+        this.updateGitHubUI();
+        this.showStatusMessage('github-settings-status', 'success', '✅ 保存しました');
     }
 
     /**
      * GitHub接続テスト
      */
     async testGitHubConnection() {
-        this.applyGitHubSettingsForm();
+        this.githubSync.setToken(document.getElementById('github-token').value.trim());
         this.showStatusMessage('github-settings-status', 'loading', '🔌 接続を確認中...');
 
         try {
@@ -2965,22 +3007,6 @@ class VirtualBookshelf {
             } else {
                 this.showStatusMessage('github-settings-status', 'error', `⚠️ ${result.fullName} への書き込み権限がありません（トークンのContents権限を確認してください）`);
             }
-        } catch (error) {
-            this.showStatusMessage('github-settings-status', 'error', `❌ ${error.message}`);
-        }
-    }
-
-    /**
-     * OAuth（Sveltia/Decap互換エンドポイント）でサインイン
-     */
-    async githubOAuthSignIn() {
-        this.applyGitHubSettingsForm();
-        this.showStatusMessage('github-settings-status', 'loading', '🔐 ポップアップで認証中...');
-
-        try {
-            const token = await this.githubSync.signInWithOAuth();
-            document.getElementById('github-token').value = token;
-            this.showStatusMessage('github-settings-status', 'success', '✅ サインインしました');
         } catch (error) {
             this.showStatusMessage('github-settings-status', 'error', `❌ ${error.message}`);
         }
@@ -3562,6 +3588,35 @@ class VirtualBookshelf {
     }
 }
 
+/**
+ * 表紙画像のフォールバック処理
+ * data-fallbacks（|区切りのURL群）を順に試し、全滅したらプレースホルダーに置換する。
+ * Amazonの画像CDNは404の代わりに1x1のGIFを返すため、読み込み成功でも実質空の画像は失敗扱いにする。
+ */
+function setupCoverFallback(img) {
+    if (img.dataset.fallbackBound) return;
+    img.dataset.fallbackBound = '1';
+
+    const tryNext = () => {
+        const fallbacks = (img.dataset.fallbacks || '').split('|').filter(url => url);
+        if (fallbacks.length > 0) {
+            img.dataset.fallbacks = fallbacks.slice(1).join('|');
+            img.src = fallbacks[0];
+        } else {
+            const placeholder = document.createElement('div');
+            placeholder.className = img.classList.contains('book-detail-cover') ?
+                'book-detail-cover-placeholder' : 'book-cover-placeholder';
+            placeholder.textContent = img.alt || '📖';
+            img.replaceWith(placeholder);
+        }
+    };
+
+    img.addEventListener('error', tryNext);
+    img.addEventListener('load', () => {
+        if (img.naturalWidth <= 1) tryNext();
+    });
+}
+
 // Lazy Loading for Images
 class LazyLoader {
     constructor() {
@@ -3582,6 +3637,7 @@ class LazyLoader {
 
     observe() {
         document.querySelectorAll('.lazy').forEach(img => {
+            setupCoverFallback(img);
             this.observer.observe(img);
         });
     }
