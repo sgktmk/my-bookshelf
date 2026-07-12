@@ -156,11 +156,18 @@ a { color: var(--accent); }
 }
 
 .header-mark {
-    font-size: 2.4rem;
-    line-height: 1;
-    display: inline-block;
-    filter: drop-shadow(0 6px 10px rgba(28, 24, 19, 0.18));
-    animation: float 5.5s ease-in-out infinite;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    line-height: 0;
+    animation: float 6s ease-in-out infinite;
+}
+
+.header-mark svg {
+    display: block;
+    width: 34px;
+    height: 34px;
 }
 
 .header-wordmark {

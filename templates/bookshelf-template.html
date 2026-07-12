@@ -200,8 +200,8 @@
             <h1 class="bookshelf-title">{{BOOKSHELF_EMOJI}} {{BOOKSHELF_NAME}}</h1>
             <p class="bookshelf-description">{{BOOKSHELF_DESCRIPTION}}</p>
             <div class="bookshelf-meta">
-                <div class="bookshelf-stat">📚 {{TOTAL_BOOKS}}冊</div>
-                <div class="bookshelf-stat">📅 {{CREATED_DATE}}</div>
+                <div class="bookshelf-stat">{{TOTAL_BOOKS}}冊</div>
+                <div class="bookshelf-stat">{{CREATED_DATE}}</div>
 
             </div>
         </header>
@@ -211,11 +211,11 @@
         </main>
 
         <footer class="footer-info">
-            <h3>📤 この本棚をシェア</h3>
+            <h3>この本棚をシェア</h3>
             <div class="share-buttons">
                 <a href="https://twitter.com/intent/tweet?text={{ENCODED_BOOKSHELF_NAME}}%20%23vbshelf%20{{ENCODED_URL}}"
-                   target="_blank" class="share-btn share-twitter">🐦 Twitter</a>
-                <button onclick="copyToClipboard('{{BOOKSHELF_NAME}} #vbshelf {{BOOKSHELF_URL}}')" class="share-btn share-copy">📋 テキストコピー</button>
+                   target="_blank" class="share-btn share-twitter">Twitter</a>
+                <button onclick="copyToClipboard('{{BOOKSHELF_NAME}} #vbshelf {{BOOKSHELF_URL}}')" class="share-btn share-copy">テキストコピー</button>
             </div>
 
             <p style="margin-top: 2rem; color: #666;">

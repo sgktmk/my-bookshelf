@@ -160,7 +160,7 @@ class StaticBookshelfGenerator {
                     <div class="static-book-info">
                         <div class="static-book-title">${this.escapeHtml(book.title)}</div>
                         <div class="static-book-author">${this.escapeHtml(book.authors)}</div>
-                        ${rating > 0 ? `<div class="static-book-rating">${'⭐'.repeat(rating)}</div>` : ''}
+                        ${rating > 0 ? `<div class="static-book-rating">${'★'.repeat(rating)}</div>` : ''}
                         ${memoHtml ? `<div class="static-book-memo">${memoHtml}</div>` : ''}
                     </div>
                 </div>
