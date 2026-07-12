@@ -1,8 +1,8 @@
-# 📚 Virtual Bookshelf Template
+# 📖 liklik bukselp bilong mi — 私の小さな本棚
 
-あなたの個人読書ライブラリを美しく展示するWebアプリケーションテンプレートです。
+シンプルモダンで、ちょっとシュールな、個人蔵書のためのバーチャル本棚です。姉妹ブログ「[bikpela poteto bilong mi](https://www.sgktmk.com)」と揃いのトーンで、PC・スマホどちらでも心地よく読めるレスポンシブデザインに対応しています。
 
-[Virtual Bookshelf](https://karaage0703.github.io/karaage-virtual-bookshelf/)
+> ベースは [Virtual Bookshelf](https://karaage0703.github.io/karaage-virtual-bookshelf/) テンプレート。
 
 ## 🎯 概要
 

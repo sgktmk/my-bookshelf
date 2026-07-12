@@ -111,7 +111,7 @@ class StaticBookshelfGenerator {
         // URL生成（本棚IDベースで固定）
         const bookshelfUrl = `${this.baseUrl}static/${bookshelf.id}.html`;
         const encodedUrl = encodeURIComponent(bookshelfUrl);
-        const encodedTitle = encodeURIComponent(`${bookshelf.name} - Virtual Bookshelf`);
+        const encodedTitle = encodeURIComponent(`${bookshelf.name} — liklik bukselp bilong mi`);
 
         const replacements = {
             '{{BOOKSHELF_NAME}}': this.escapeHtml(bookshelf.name),
@@ -209,8 +209,8 @@ class StaticBookshelfGenerator {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{BOOKSHELF_NAME}} - Virtual Bookshelf</title>
-    <meta property="og:title" content="{{BOOKSHELF_NAME}} - Virtual Bookshelf">
+    <title>{{BOOKSHELF_NAME}} — liklik bukselp bilong mi</title>
+    <meta property="og:title" content="{{BOOKSHELF_NAME}} — liklik bukselp bilong mi">
     <meta property="og:description" content="{{BOOKSHELF_DESCRIPTION}}">
     <meta property="og:url" content="{{BOOKSHELF_URL}}">
     <link rel="stylesheet" href="../css/bookshelf.css">
