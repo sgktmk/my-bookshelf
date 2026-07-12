@@ -1,5 +1,5 @@
 {
-  "exportDate": "2026-07-12T02:33:13.536Z",
+  "exportDate": "2026-07-12T02:40:21.061Z",
   "books": {
     "B009GXLRZY": {
       "title": "イザベラ・バードの日本紀行（上） (講談社学術文庫)",
@@ -1483,6 +1483,150 @@
       "memo": "",
       "rating": 0,
       "format": "paper"
+    },
+    "9784865944587": {
+      "title": "AIエージェント　人類と協働する機械",
+      "authors": "広木大地",
+      "acquiredTime": 1783823754246,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784865944587.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823754247,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "9784296126293": {
+      "title": "プロジェクトマネジャーになる",
+      "authors": "峯本展夫",
+      "acquiredTime": 1783823787414,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784296126293.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823787414,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "9784478420454": {
+      "title": "クリティカルチェーン : なぜ、プロジェクトは予定どおりに進まないのか?",
+      "authors": "Goldratt,EliyahuM.,1948-2011 三本木,亮,1960-",
+      "acquiredTime": 1783823796412,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784478420454.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823796412,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "9784043300075": {
+      "title": "クリエイティブジャーナリング : ノートではじめる自己理解とアイデア創出",
+      "authors": "杉山,修",
+      "acquiredTime": 1783823811021,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784043300075.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823811021,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "9784046045331": {
+      "title": "Distinction 2000",
+      "authors": "著者未取得",
+      "acquiredTime": 1783823825845,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784046045331.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823825845,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "9784478108536": {
+      "title": "独学大全 = Self-study ENCYCLOPEDIA : 絶対に「学ぶこと」をあきらめたくない人のための55の技法",
+      "authors": "読書猿",
+      "acquiredTime": 1783823859749,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784478108536.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823859749,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "9784296125067": {
+      "title": "社内政治の科学 : 経営学の研究成果",
+      "authors": "木村琢磨",
+      "acquiredTime": 1783823908734,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784296125067.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823908734,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "4478410232": {
+      "title": "マネジメント : 基本と原則",
+      "authors": "Drucker,PeterFerdinand,1909-2005 上田,惇生,1938-",
+      "acquiredTime": 1783823939242,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/4478410232.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823939244,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "9784763141477": {
+      "title": "忙しいのに退化する人たち　やってはいけない働き方",
+      "authors": "デニス・ノルマーク アナス・フォウ・イェンスン 山田文",
+      "acquiredTime": 1783823948554,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784763141477.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823948554,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "9784621311790": {
+      "title": "カーニハンのUNIX回顧録",
+      "authors": "ブライアン・カーニハン 井上尚司",
+      "acquiredTime": 1783823986662,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784621311790.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823986662,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "9784153400276": {
+      "title": "関数電卓がすごい",
+      "authors": "芝村裕吏",
+      "acquiredTime": 1783823997248,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784153400276.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783823997248,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
+    },
+    "9784106105111": {
+      "title": "短歌のレシピ",
+      "authors": "俵,万智,1962-",
+      "acquiredTime": 1783824007141,
+      "readStatus": "UNKNOWN",
+      "productImage": "https://images-na.ssl-images-amazon.com/images/P/9784106105111.01.L.jpg",
+      "source": "manual_add",
+      "addedDate": 1783824007141,
+      "memo": "",
+      "rating": 0,
+      "format": "paper"
     }
   },
   "bookshelves": [],
@@ -1497,7 +1641,7 @@
   },
   "bookOrder": {},
   "stats": {
-    "totalBooks": 133,
+    "totalBooks": 145,
     "notesCount": 0
   },
   "version": "2.0"
