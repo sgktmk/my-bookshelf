@@ -562,11 +562,48 @@ class BookManager {
     }
 
     /**
-     * Amazon商品画像URLを取得
+     * 表紙画像URLを取得（保存済みのproductImageを優先）
      */
     getProductImageUrl(book) {
-        const effectiveAsin = this.getEffectiveASIN(book);
-        return `https://images-na.ssl-images-amazon.com/images/P/${effectiveAsin}.01.L.jpg`;
+        // ASINが変更された場合は新ASINのAmazon画像を優先
+        if (book.updatedAsin && book.updatedAsin.trim() !== '') {
+            return `https://images-na.ssl-images-amazon.com/images/P/${book.updatedAsin}.01.L.jpg`;
+        }
+        if (book.productImage) {
+            return book.productImage;
+        }
+        return `https://images-na.ssl-images-amazon.com/images/P/${book.asin}.01.L.jpg`;
+    }
+
+    /**
+     * 表紙画像URLの候補リストを優先順で取得
+     * Amazon画像CDNはFirefoxのトラッキング防止（厳格）でブロックされるため、
+     * ISBNの本はopenBDの表紙にフォールバックできるようにする
+     */
+    getCoverImageCandidates(book) {
+        const candidates = [];
+
+        if (book.updatedAsin && book.updatedAsin.trim() !== '') {
+            candidates.push(`https://images-na.ssl-images-amazon.com/images/P/${book.updatedAsin}.01.L.jpg`);
+        }
+        if (book.productImage) {
+            candidates.push(book.productImage);
+        }
+
+        // ISBNの本はopenBDの表紙（トラッキング防止でブロックされない）
+        const { normalized, type } = this.normalizeIdentifier(book.asin);
+        if (type === 'isbn13') {
+            candidates.push(`https://cover.openbd.jp/${normalized}.jpg`);
+        } else if (type === 'isbn10') {
+            const isbn13 = this.convertISBN10to13(normalized);
+            if (isbn13) {
+                candidates.push(`https://cover.openbd.jp/${isbn13}.jpg`);
+            }
+        }
+
+        candidates.push(`https://images-na.ssl-images-amazon.com/images/P/${this.getEffectiveASIN(book)}.01.L.jpg`);
+
+        return [...new Set(candidates)];
     }
 
     /**

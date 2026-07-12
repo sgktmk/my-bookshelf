@@ -257,22 +257,37 @@ git push origin main
 
 ### データの永続化
 
-**方法A: GitHub直接保存（推奨・CMS風）**
+**方法A: GitHub直接保存（推奨・Sveltia CMS方式）**
 
-サイドバーの「GitHub同期」から、エクスポート・手動push不要で`data/library.json`を直接コミットできます。
+Sveltia CMSと同じ構成で、サイドバーの「GitHub同期」からエクスポート・手動push不要で`data/library.json`を直接コミットできます。
+設定はブラウザで入力するのではなく、リポジトリ内の`data/config.json`に記載します（Sveltiaの`config.yml`に相当）。
 
-1. 「⚙️ 連携設定」でリポジトリ（オーナー/リポジトリ名/ブランチ）を設定
-2. 認証方法を選択:
-   - **Fine-grained PAT（かんたん）**: [GitHubでトークンを作成](https://github.com/settings/personal-access-tokens/new)。
-     対象リポジトリを本リポジトリのみに絞り、権限は「Contents: Read and write」を付与して貼り付け
-   - **OAuthサインイン**: Sveltia CMS / Decap CMS 互換の認証エンドポイント
-     （例: [sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth) をCloudflare Workersにデプロイ）のURLを設定し、
-     「🔐 GitHubでサインイン」。ブログ等で既にデプロイ済みのものを流用可能
-3. 「接続テスト」で書き込み権限を確認
-4. 蔵書やメモを編集すると「☁️ GitHubに保存」ボタンに未保存マーク（●）が付くので、クリックしてコミット
-5. 別のブラウザ・端末で編集した場合は「🔄 GitHubから読込」で最新データを取得
+*初回セットアップ（リポジトリ側・1回だけ）*
 
-トークンはブラウザのLocalStorageにのみ保存されます。共有PCでは使用後に「トークンを削除」を推奨します。
+1. GitHub OAuth用の認証Workerを用意します。ブログ等で[Sveltia CMS](https://github.com/sveltia/sveltia-cms)を使っている場合は、
+   デプロイ済みの[sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth)をそのまま流用できます
+   （WorkerのALLOWED_DOMAINSにこのサイトのドメイン、例: `yourusername.github.io` を追加するだけ）
+2. `data/config.json`の`github`ブロックにWorkerのURLを記載:
+   ```json
+   {
+     "github": {
+       "owner": "yourusername",
+       "repo": "my-bookshelf",
+       "branch": "main",
+       "authEndpoint": "https://sveltia-cms-auth.yourname.workers.dev"
+     }
+   }
+   ```
+
+*日々の使い方*
+
+1. サイドバーの「🔐 GitHubでサインイン」をクリック → ポップアップでGitHub認証（初回のみ）
+2. 蔵書やメモを編集すると「☁️ GitHubに保存」ボタンに未保存マーク（●）が付くので、クリックしてコミット
+3. 別のブラウザ・端末で編集した場合は「🔄 GitHubから読込」で最新データを取得
+
+OAuth Workerを用意しない場合は、「詳細設定」からFine-grained PAT
+（[GitHubで作成](https://github.com/settings/personal-access-tokens/new)、対象を本リポジトリのみ・権限は「Contents: Read and write」）を貼り付けても使えます。
+トークンはブラウザのLocalStorageにのみ保存されます。共有PCでは使用後に「サインアウト」を推奨します。
 
 **方法B: 手動エクスポート（従来方式）**
 1. 「💾 データエクスポート」でlibrary.jsonをダウンロード

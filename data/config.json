@@ -1,3 +1,9 @@
 {
-  "affiliateId": "vbookshelf-22"
+  "affiliateId": "vbookshelf-22",
+  "github": {
+    "owner": "sgktmk",
+    "repo": "my-bookshelf",
+    "branch": "main",
+    "authEndpoint": ""
+  }
 }

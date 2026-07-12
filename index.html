@@ -135,12 +135,15 @@
 
                     <div class="github-sync-section">
                         <h3>GitHub同期</h3>
-                        <div class="management-buttons">
+                        <div id="github-signed-out" class="management-buttons">
+                            <button id="github-signin" class="btn btn-primary">🔐 GitHubでサインイン</button>
+                        </div>
+                        <div id="github-signed-in" class="management-buttons" style="display: none;">
                             <button id="github-save" class="btn btn-primary">☁️ GitHubに保存</button>
                             <button id="github-load" class="btn btn-secondary">🔄 GitHubから読込</button>
-                            <button id="github-settings" class="btn btn-outline">⚙️ 連携設定</button>
                         </div>
                         <div id="github-sync-status" class="github-sync-status" style="display: none;"></div>
+                        <button id="github-settings" class="github-settings-link">詳細設定（PAT / サインアウト）</button>
                     </div>
                 </div>
             </aside>
@@ -413,60 +416,39 @@
         </div>
     </div>
 
-    <!-- GitHub Sync Settings Modal -->
+    <!-- GitHub Sync Settings Modal (詳細設定・PATフォールバック) -->
     <div id="github-settings-modal" class="modal">
         <div class="modal-content">
             <button class="modal-close" id="github-settings-modal-close">×</button>
             <div class="modal-header">
-                <h2>⚙️ GitHub連携設定</h2>
+                <h2>⚙️ GitHub連携の詳細設定</h2>
             </div>
             <div class="modal-body">
-                <p style="color: #666; margin-bottom: 1rem;">
-                    設定すると「☁️ GitHubに保存」ボタンで <code>data/library.json</code> を
-                    リポジトリに直接コミットできます（手動でのエクスポート＆push不要）。
+                <p class="modal-description">
+                    リポジトリとOAuth認証の設定は <code>data/config.json</code> の <code>github</code> ブロックに記載します
+                    （Sveltia CMSのconfig.ymlと同じ考え方です）。現在の設定:
                 </p>
-                <div class="form-group">
-                    <label for="github-owner">リポジトリオーナー</label>
-                    <input type="text" id="github-owner" placeholder="sgktmk" />
-                </div>
-                <div class="form-group">
-                    <label for="github-repo">リポジトリ名</label>
-                    <input type="text" id="github-repo" placeholder="my-bookshelf" />
-                </div>
-                <div class="form-group">
-                    <label for="github-branch">ブランチ</label>
-                    <input type="text" id="github-branch" placeholder="main" />
+                <div id="github-config-summary" class="github-config-summary">
+                    <!-- 設定内容がここに表示されます -->
                 </div>
 
-                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #ddd;">
+                <hr class="modal-divider">
 
-                <h3 style="margin-bottom: 0.5rem;">認証方法A: Personal Access Token</h3>
+                <h3>Personal Access Token（OAuthを使わない場合）</h3>
                 <div class="form-group">
                     <label for="github-token">Fine-grained PAT</label>
                     <input type="password" id="github-token" placeholder="github_pat_..." autocomplete="off" />
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
+                    <small class="field-note">
                         <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHubでトークンを作成</a>
                         — 対象をこのリポジトリのみに絞り、権限は Contents: Read and write を選択。
                         トークンはこのブラウザのLocalStorageにのみ保存されます。
                     </small>
                 </div>
 
-                <h3 style="margin-bottom: 0.5rem;">認証方法B: OAuthサインイン（Sveltia/Decap互換）</h3>
-                <div class="form-group">
-                    <label for="github-auth-endpoint">認証エンドポイントURL</label>
-                    <input type="url" id="github-auth-endpoint" placeholder="https://sveltia-cms-auth.example.workers.dev" />
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
-                        ブログで使っている sveltia-cms-auth などのデプロイURLを流用できます
-                    </small>
-                    <button type="button" id="github-oauth-signin" class="btn btn-secondary" style="margin-top: 0.5rem;">
-                        🔐 GitHubでサインイン
-                    </button>
-                </div>
-
                 <div id="github-settings-status" class="asin-status" style="display: none;"></div>
 
-                <div class="form-actions" style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
-                    <button id="github-signout" class="btn btn-danger" style="margin-right: auto;">トークンを削除</button>
+                <div class="form-actions modal-actions">
+                    <button id="github-signout" class="btn btn-danger" style="margin-right: auto;">サインアウト（トークン削除）</button>
                     <button id="github-test-connection" class="btn btn-secondary">接続テスト</button>
                     <button id="github-save-settings" class="btn btn-primary">保存</button>
                 </div>
