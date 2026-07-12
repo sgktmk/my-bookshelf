@@ -264,17 +264,20 @@ Sveltia CMSと同じ構成で、サイドバーの「GitHub同期」からエク
 
 *初回セットアップ（リポジトリ側・1回だけ）*
 
-1. GitHub OAuth用の認証Workerを用意します。ブログ等で[Sveltia CMS](https://github.com/sveltia/sveltia-cms)を使っている場合は、
-   デプロイ済みの[sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth)をそのまま流用できます
-   （WorkerのALLOWED_DOMAINSにこのサイトのドメイン、例: `yourusername.github.io` を追加するだけ）
-2. `data/config.json`の`github`ブロックにWorkerのURLを記載:
+1. Sveltia/Decap CMS互換のGitHub OAuth認証エンドポイントを用意し、`data/config.json`の`github.authEndpoint`に
+   **完全なURL**を記載します。既にブログ等でSveltia CMSを運用している場合は、そのOAuthエンドポイントをそのまま流用できます:
+   - ブログのNext.js APIルート（`pages/api/auth.js` + `callback.js`）の場合: `https://your-blog.com/api/auth`
+   - [sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth) Workerの場合: `https://xxx.workers.dev/auth`
+
+   新規に用意する場合は、GitHubで[OAuth App](https://github.com/settings/developers)を作成し
+   （callback URLは認証エンドポイント側の`/api/callback`等）、client ID/secretを環境変数に設定します。
    ```json
    {
      "github": {
        "owner": "yourusername",
        "repo": "my-bookshelf",
        "branch": "main",
-       "authEndpoint": "https://sveltia-cms-auth.yourname.workers.dev"
+       "authEndpoint": "https://your-blog.com/api/auth"
      }
    }
    ```

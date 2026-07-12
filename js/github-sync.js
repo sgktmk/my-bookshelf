@@ -5,7 +5,9 @@
  * - リポジトリやOAuthエンドポイントの設定は data/config.json の `github` ブロックに記載
  *   （Sveltiaのconfig.ymlに相当。ブラウザ上で設定を入力する必要はない）
  * - 認証は Sveltia/Decap CMS 互換の OAuth ポップアップフロー
- *   （sveltia-cms-auth 等のWorkerを authEndpoint に指定。ブログ用のものを流用可能）
+ *   authEndpoint には認証エンドポイントの完全なURLを指定する:
+ *   - ブログのNext.js APIルート流用: https://www.sgktmk.com/api/auth
+ *   - sveltia-cms-auth Worker の場合:  https://xxx.workers.dev/auth
  * - OAuthを使わない場合のフォールバックとして Fine-grained PAT の貼り付けにも対応
  *
  * トークンのみブラウザの LocalStorage に保存される（このブラウザ内のみ）。
@@ -82,7 +84,7 @@ class GitHubSync {
 
     /**
      * Sveltia / Decap CMS 互換のOAuthポップアップフローでサインイン
-     * (authEndpoint には sveltia-cms-auth 等のデプロイURLを設定)
+     * (authEndpoint には認証エンドポイントの完全なURLを設定。例: https://www.sgktmk.com/api/auth)
      */
     signInWithOAuth() {
         return new Promise((resolve, reject) => {
@@ -92,7 +94,7 @@ class GitHubSync {
                 return;
             }
 
-            const url = `${endpoint}/auth?provider=github&site_id=${encodeURIComponent(window.location.hostname)}&scope=repo`;
+            const url = `${endpoint}?provider=github&site_id=${encodeURIComponent(window.location.hostname)}&scope=repo`;
             const popup = window.open(url, 'github-oauth', 'width=600,height=800,popup=1');
             if (!popup) {
                 reject(new Error('ポップアップがブロックされました。ポップアップを許可してください。'));

@@ -4,6 +4,6 @@
     "owner": "sgktmk",
     "repo": "my-bookshelf",
     "branch": "main",
-    "authEndpoint": ""
+    "authEndpoint": "https://www.sgktmk.com/api/auth"
   }
 }
