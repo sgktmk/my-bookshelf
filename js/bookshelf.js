@@ -451,7 +451,7 @@ class VirtualBookshelf {
             const tokenInput = document.getElementById('github-token');
             if (tokenInput) tokenInput.value = '';
             this.updateGitHubUI();
-            this.showStatusMessage('github-settings-status', 'success', '✅ サインアウトしました');
+            this.showStatusMessage('github-settings-status', 'success', 'サインアウトしました');
         });
     }
 
@@ -478,14 +478,14 @@ class VirtualBookshelf {
             return;
         }
 
-        this.showStatusMessage('github-sync-status', 'loading', '🔐 ポップアップで認証中...');
+        this.showStatusMessage('github-sync-status', 'loading', 'ポップアップで認証中...');
 
         try {
             await this.githubSync.signInWithOAuth();
             this.updateGitHubUI();
-            this.showStatusMessage('github-sync-status', 'success', '✅ サインインしました');
+            this.showStatusMessage('github-sync-status', 'success', 'サインインしました');
         } catch (error) {
-            this.showStatusMessage('github-sync-status', 'error', `❌ ${error.message}`);
+            this.showStatusMessage('github-sync-status', 'error', `${error.message}`);
         }
     }
 
@@ -622,7 +622,7 @@ class VirtualBookshelf {
         const button = document.getElementById('sort-direction');
         
         if (this.sortOrder === 'custom') {
-            button.textContent = '📝 カスタム順';
+            button.textContent = 'カスタム順';
             button.disabled = true;
             button.style.opacity = '0.5';
         } else {
@@ -749,7 +749,7 @@ class VirtualBookshelf {
                         <a href="${amazonUrl}" target="_blank" rel="noopener noreferrer" class="book-link amazon-link">Amazon</a>
                         <a href="#" class="book-link detail-link" data-asin="${book.asin}">詳細</a>
                     </div>
-                    ${userNote && userNote.memo ? `<div class="book-memo">📝 ${this.formatMemoForDisplay(userNote.memo, 300)}</div>` : ''}
+                    ${userNote && userNote.memo ? `<div class="book-memo">${this.formatMemoForDisplay(userNote.memo, 300)}</div>` : ''}
                     ${this.displayStarRating(userNote?.rating)}
                 </div>
             `;
@@ -765,7 +765,7 @@ class VirtualBookshelf {
                     <a href="${amazonUrl}" target="_blank" rel="noopener noreferrer" class="book-cover-link">
                         ${book.productImage ?
                             `<img class="book-cover lazy" data-src="${this.escapeHtml(coverCandidates[0])}" data-fallbacks="${this.escapeHtml(coverCandidates.slice(1).join('|'))}" alt="${this.escapeHtml(book.title)}">` :
-                            '<div class="book-cover-placeholder">📖</div>'
+                            '<div class="book-cover-placeholder"></div>'
                         }
                     </a>
                 </div>
@@ -776,7 +776,7 @@ class VirtualBookshelf {
                         <a href="${amazonUrl}" target="_blank" rel="noopener noreferrer" class="book-link amazon-link">Amazon</a>
                         <a href="#" class="book-link detail-link" data-asin="${book.asin}">詳細</a>
                     </div>
-                    ${userNote && userNote.memo ? `<div class="book-memo">📝 ${this.formatMemoForDisplay(userNote.memo, 400)}</div>` : ''}
+                    ${userNote && userNote.memo ? `<div class="book-memo">${this.formatMemoForDisplay(userNote.memo, 400)}</div>` : ''}
                     ${this.displayStarRating(userNote?.rating)}
 
                 </div>
@@ -848,14 +848,14 @@ class VirtualBookshelf {
             });
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('text/plain', JSON.stringify(this.draggedBooks));
-            console.log('🎯 Multi-drag started:', this.draggedBooks.length, 'books');
+            console.log('Multi-drag started:', this.draggedBooks.length, 'books');
         } else {
             // Dragging single book
             this.draggedBooks = null;
             bookItem.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('text/plain', this.draggedASIN);
-            console.log('🎯 Drag started:', this.draggedASIN, bookItem);
+            console.log('Drag started:', this.draggedASIN, bookItem);
         }
     }
 
@@ -937,7 +937,7 @@ class VirtualBookshelf {
         document.querySelectorAll('.book-item').forEach(item => {
             item.style.borderLeft = '';
         });
-        console.log('🎯 Drag ended');
+        console.log('Drag ended');
     }
 
     reorderBooks(draggedASIN, targetASIN) {
@@ -1044,7 +1044,7 @@ class VirtualBookshelf {
         this.saveUserData();
         this.updateDisplay();
 
-        console.log('🎯 Reordered', draggedASINs.length, 'books to position before', targetASIN);
+        console.log('Reordered', draggedASINs.length, 'books to position before', targetASIN);
     }
 
     showBookDetail(book, isEditMode = false) {
@@ -1061,13 +1061,13 @@ class VirtualBookshelf {
                 <div class="book-detail-header">
                     ${book.productImage ?
                         `<img class="book-detail-cover" src="${this.escapeHtml(coverCandidates[0])}" data-fallbacks="${this.escapeHtml(coverCandidates.slice(1).join('|'))}" alt="${this.escapeHtml(book.title)}">` :
-                        '<div class="book-detail-cover-placeholder">📖</div>'
+                        '<div class="book-detail-cover-placeholder"></div>'
                     }
                     <div class="book-detail-info">
                         <div class="book-info-section" ${isEditMode ? 'style="display: none;"' : ''}>
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                                 <h2 style="margin: 0; color: #2c3e50; flex: 1;">${book.title}</h2>
-                                <button class="btn btn-primary edit-mode-btn" data-asin="${book.asin}" style="margin-left: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;">✏️ 編集</button>
+                                <button class="btn btn-primary edit-mode-btn" data-asin="${book.asin}" style="margin-left: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;">編集</button>
                             </div>
                             <p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>著者:</strong> ${book.authors}</p>
                             ${book.format ? `<p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>形式:</strong> ${this.formatLabel(book.format)}</p>` : ''}
@@ -1078,56 +1078,56 @@ class VirtualBookshelf {
                         </div>
                         <div class="book-edit-section" ${!isEditMode ? 'style="display: none;"' : ''}>
                             <div class="edit-field">
-                                <label>📖 タイトル</label>
+                                <label>タイトル</label>
                                 <input type="text" class="edit-title" data-asin="${book.asin}" value="${book.title}" />
                             </div>
                             <div class="edit-field">
-                                <label>✍️ 著者</label>
+                                <label>著者</label>
                                 <input type="text" class="edit-authors" data-asin="${book.asin}" value="${book.authors}" />
                             </div>
                             <div class="edit-field">
-                                <label>📅 購入日</label>
+                                <label>購入日</label>
                                 <input type="date" class="edit-acquired-time" data-asin="${book.asin}" value="${new Date(book.acquiredTime).toISOString().split('T')[0]}" />
                             </div>
                             <div class="edit-field">
-                                <label>📚 形式</label>
+                                <label>形式</label>
                                 <select class="edit-format" data-asin="${book.asin}">
                                     <option value="" ${!book.format ? 'selected' : ''}>未設定</option>
-                                    <option value="paper" ${book.format === 'paper' ? 'selected' : ''}>📕 紙の本</option>
-                                    <option value="kindle" ${book.format === 'kindle' ? 'selected' : ''}>📱 Kindle</option>
-                                    <option value="epub" ${book.format === 'epub' ? 'selected' : ''}>📗 EPUB</option>
-                                    <option value="pdf" ${book.format === 'pdf' ? 'selected' : ''}>📄 PDF</option>
+                                    <option value="paper" ${book.format === 'paper' ? 'selected' : ''}>紙の本</option>
+                                    <option value="kindle" ${book.format === 'kindle' ? 'selected' : ''}>Kindle</option>
+                                    <option value="epub" ${book.format === 'epub' ? 'selected' : ''}>EPUB</option>
+                                    <option value="pdf" ${book.format === 'pdf' ? 'selected' : ''}>PDF</option>
                                 </select>
                             </div>
                             <div class="edit-field">
-                                <label>🔖 オリジナルASIN</label>
+                                <label>オリジナルASIN</label>
                                 <input type="text" class="edit-original-asin" data-asin="${book.asin}" value="${book.asin}" maxlength="10" pattern="[A-Z0-9]{10}" />
                                 <small class="field-help">※ 元のASIN（通常は変更不要）</small>
                             </div>
                             <div class="edit-field">
-                                <label>🔗 変更後ASIN（オプション）</label>
+                                <label>変更後ASIN（オプション）</label>
                                 <input type="text" class="edit-updated-asin" data-asin="${book.asin}" value="${book.updatedAsin || ''}" placeholder="新しいASINがある場合のみ入力" maxlength="10" pattern="[A-Z0-9]{10}" />
                                 <small class="field-help">※ Amazonで商品のASINが変更された場合の新しいASINを入力</small>
                             </div>
                             <div class="edit-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                                <button class="btn btn-small save-book-changes" data-asin="${book.asin}">💾 変更を保存</button>
-                                <button class="btn btn-small btn-secondary cancel-edit-btn" data-asin="${book.asin}">❌ キャンセル</button>
+                                <button class="btn btn-small save-book-changes" data-asin="${book.asin}">変更を保存</button>
+                                <button class="btn btn-small btn-secondary cancel-edit-btn" data-asin="${book.asin}">キャンセル</button>
                             </div>
                         </div>
 
                         
                         <div class="book-actions">
                             <a class="amazon-link" href="${amazonUrl}" target="_blank" rel="noopener">
-                                📚 Amazonで見る
+                                Amazonで見る
                             </a>
                             <button class="btn btn-danger delete-btn" data-asin="${book.asin}" style="${isEditMode ? '' : 'display: none;'}">
-                                🗑️ 本を削除
+                                本を削除
                             </button>
                         </div>
                         
                         <div class="bookshelf-actions" style="margin-top: 1rem; ${isEditMode ? '' : 'display: none;'}">
                             <div style="margin-bottom: 1rem;">
-                                <label for="bookshelf-select-${book.asin}">📚 本棚に追加:</label>
+                                <label for="bookshelf-select-${book.asin}">本棚に追加:</label>
                                 <select id="bookshelf-select-${book.asin}" class="bookshelf-select">
                                     <option value="">本棚を選択...</option>
                                     ${this.userData.bookshelves ? this.userData.bookshelves.map(bs => 
@@ -1138,7 +1138,7 @@ class VirtualBookshelf {
                             </div>
                             
                             <div class="current-bookshelves">
-                                <label>📚 現在の本棚:</label>
+                                <label>現在の本棚:</label>
                                 <div id="current-bookshelves-${book.asin}">
                                     ${this.userData.bookshelves ? this.userData.bookshelves
                                         .filter(bs => bs.books && bs.books.includes(book.asin))
@@ -1148,8 +1148,8 @@ class VirtualBookshelf {
                                                 <button class="btn btn-small btn-danger remove-from-bookshelf" 
                                                         data-asin="${book.asin}" 
                                                         data-bookshelf-id="${bs.id}" 
-                                                        style="margin-left: 0.5rem; padding: 0.125rem 0.25rem; font-size: 0.75rem;">
-                                                    ❌
+                                                        style="margin-left: 0.5rem; padding: 0.125rem 0.5rem; font-size: 0.85rem;">
+                                                    ×
                                                 </button>
                                             </div>
                                         `).join('') : ''}
@@ -1162,19 +1162,19 @@ class VirtualBookshelf {
                 </div>
                 
                 <div class="book-notes-section" style="${!isEditMode && !userNote.memo ? 'display: none;' : ''}">
-                    <h3>📝 個人メモ</h3>
+                    <h3>個人メモ</h3>
                     ${!isEditMode && userNote.memo ? `
                         <div class="note-display" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #007bff;">${this.convertMarkdownLinksToHtml(userNote.memo)}</div>
                     ` : ''}
                     <textarea class="note-textarea large-textarea" data-asin="${book.asin}" rows="6" placeholder="この本についてのメモやおすすめポイントを記入...&#10;&#10;改行も使えます。" style="${isEditMode ? '' : 'display: none;'}">${userNote.memo || ''}</textarea>
                     <div class="note-preview" style="${isEditMode ? (userNote.memo ? 'display: block;' : 'display: none;') : 'display: none;'}">
-                        <h4>📄 プレビュー</h4>
+                        <h4>プレビュー</h4>
                         <div class="note-preview-content">${isEditMode && userNote.memo ? this.convertMarkdownLinksToHtml(userNote.memo) : ''}</div>
                     </div>
-                    <p class="note-help" style="${isEditMode ? '' : 'display: none;'}">💡 メモを記入すると自動的に公開されます • 改行は表示に反映されます</p>
+                    <p class="note-help" style="${isEditMode ? '' : 'display: none;'}">メモを記入すると自動的に公開されます • 改行は表示に反映されます</p>
 
                     <div class="rating-section" style="${isEditMode ? '' : 'display: none;'}">
-                        <h4>⭐ 星評価</h4>
+                        <h4>★ 星評価</h4>
                         <div class="star-rating" data-asin="${book.asin}" data-current-rating="${userNote.rating || 0}">
                             ${this.generateStarRating(userNote.rating || 0)}
                         </div>
@@ -1183,7 +1183,7 @@ class VirtualBookshelf {
                 </div>
                 
                 <div class="book-highlights-section" id="highlights-${book.asin}">
-                    <h3>🎯 ハイライト</h3>
+                    <h3>ハイライト</h3>
                     <div class="highlights-loading">ハイライトを読み込み中...</div>
                 </div>
             </div>
@@ -1229,7 +1229,7 @@ class VirtualBookshelf {
         if (ratingResetBtn) {
             ratingResetBtn.addEventListener('click', (e) => {
                 const asin = e.target.dataset.asin;
-                console.log(`🔄 評価リセット: ASIN: ${asin}`);
+                console.log(`評価リセット: ASIN: ${asin}`);
                 this.saveRating(asin, 0);
 
                 // Update star display in modal
@@ -1309,7 +1309,7 @@ class VirtualBookshelf {
                 if (e.target.classList.contains('star')) {
                     const rating = parseInt(e.target.dataset.rating);
                     const asin = starRating.dataset.asin;
-                    console.log(`⭐ 星評価: ${rating}星, ASIN: ${asin}`);
+                    console.log(`★ 星評価: ${rating}星, ASIN: ${asin}`);
                     this.saveRating(asin, rating);
                     
                     // Update current rating data
@@ -1372,11 +1372,11 @@ class VirtualBookshelf {
                     window.highlightsManager.renderHighlights(highlights, highlightsListContainer);
                     
                     // Replace loading with rendered highlights
-                    highlightsContainer.innerHTML = '<h3>🎯 ハイライト</h3>';
+                    highlightsContainer.innerHTML = '<h3>ハイライト</h3>';
                     highlightsContainer.appendChild(highlightsListContainer);
                 } else {
                     // No highlights found
-                    highlightsContainer.innerHTML = '<h3>🎯 ハイライト</h3><p class="no-highlights">この本のハイライトはありません</p>';
+                    highlightsContainer.innerHTML = '<h3>ハイライト</h3><p class="no-highlights">この本のハイライトはありません</p>';
                 }
             } else {
                 // Fallback if HighlightsManager not available
@@ -1512,14 +1512,14 @@ class VirtualBookshelf {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        console.log('📁 library.jsonファイルを自動生成しました');
+        console.log('library.jsonファイルを自動生成しました');
     }
 
     updateBookshelfSelector() {
         const selector = document.getElementById('bookshelf-selector');
         if (!selector) return;
         
-        selector.innerHTML = '<option value="all">📚 全ての本</option>';
+        selector.innerHTML = '<option value="all">全ての本</option>';
         
         if (this.userData.bookshelves) {
             this.userData.bookshelves.forEach(bookshelf => {
@@ -1558,7 +1558,7 @@ class VirtualBookshelf {
         this.userData.bookshelves.forEach(bookshelf => {
             const bookCount = bookshelf.books ? bookshelf.books.length : 0;
             const isPublic = bookshelf.isPublic || false;
-            const publicBadge = isPublic ? '<span class="public-badge">📤 公開中</span>' : '';
+            const publicBadge = isPublic ? '<span class="public-badge">公開中</span>' : '';
 
 
 
@@ -1573,7 +1573,7 @@ class VirtualBookshelf {
                     </div>
                     <div class="bookshelf-actions">
                         <button class="btn btn-secondary edit-bookshelf" data-id="${bookshelf.id}">編集</button>
-                        ${isPublic ? `<button class="btn btn-primary share-bookshelf" data-id="${bookshelf.id}">📄 静的ページ生成</button>` : ''}
+                        ${isPublic ? `<button class="btn btn-primary share-bookshelf" data-id="${bookshelf.id}">静的ページ生成</button>` : ''}
                         <button class="btn btn-danger delete-bookshelf" data-id="${bookshelf.id}">削除</button>
                     </div>
                 </div>
@@ -1615,13 +1615,13 @@ class VirtualBookshelf {
 
         // Set form title and populate fields for editing
         if (bookshelfToEdit) {
-            title.textContent = '📚 本棚を編集';
+            title.textContent = '本棚を編集';
             nameInput.value = bookshelfToEdit.name;
             emojiInput.value = bookshelfToEdit.emoji || '📚';
             descriptionInput.value = bookshelfToEdit.description || '';
             isPublicInput.checked = bookshelfToEdit.isPublic || false;
         } else {
-            title.textContent = '📚 新しい本棚';
+            title.textContent = '新しい本棚';
             nameInput.value = '';
             emojiInput.value = '📚';
             descriptionInput.value = '';
@@ -1692,7 +1692,7 @@ class VirtualBookshelf {
         const bookshelf = this.userData.bookshelves.find(b => b.id === bookshelfId);
         if (!bookshelf) return;
 
-        if (confirm(`📚 本棚「${bookshelf.name}」を削除しますか？\n\n⚠️ この操作は取り消せません。`)) {
+        if (confirm(`本棚「${bookshelf.name}」を削除しますか？\n\nこの操作は取り消せません。`)) {
             this.userData.bookshelves = this.userData.bookshelves.filter(b => b.id !== bookshelfId);
             this.saveUserData();
             this.updateBookshelfSelector();
@@ -1712,13 +1712,13 @@ class VirtualBookshelf {
         const bookshelfId = bookshelfSelect.value;
         
         if (!bookshelfId) {
-            alert('📚 本棚を選択してください');
+            alert('本棚を選択してください');
             return;
         }
 
         const bookshelf = this.userData.bookshelves.find(b => b.id === bookshelfId);
         if (!bookshelf) {
-            alert('❌ 本棚が見つかりません');
+            alert('本棚が見つかりません');
             return;
         }
 
@@ -1727,7 +1727,7 @@ class VirtualBookshelf {
         }
 
         if (bookshelf.books.includes(asin)) {
-            alert(`📚 この本は既に「${bookshelf.name}」に追加済みです`);
+            alert(`この本は既に「${bookshelf.name}」に追加済みです`);
             return;
         }
 
@@ -1735,7 +1735,7 @@ class VirtualBookshelf {
         this.saveUserData();
         this.renderBookshelfList(); // Update the bookshelf management UI if open
         
-        alert(`✅ 「${bookshelf.name}」に追加しました！`);
+        alert(`「${bookshelf.name}」に追加しました！`);
         
         // Reset the dropdown
         bookshelfSelect.value = '';
@@ -1744,7 +1744,7 @@ class VirtualBookshelf {
     removeFromBookshelf(asin, bookshelfId) {
         const bookshelf = this.userData.bookshelves.find(b => b.id === bookshelfId);
         if (!bookshelf || !bookshelf.books) {
-            alert('❌ 本棚が見つかりません');
+            alert('本棚が見つかりません');
             return;
         }
         
@@ -1752,11 +1752,11 @@ class VirtualBookshelf {
         const bookTitle = book ? book.title : 'この本';
         
         if (!bookshelf.books.includes(asin)) {
-            alert(`📚 この本は「${bookshelf.name}」にありません`);
+            alert(`この本は「${bookshelf.name}」にありません`);
             return;
         }
         
-        if (confirm(`📚 「${bookTitle}」を「${bookshelf.name}」から除外しますか？\n\n⚠️ 本自体は削除されず、この本棚からのみ削除されます。`)) {
+        if (confirm(`「${bookTitle}」を「${bookshelf.name}」から除外しますか？\n\n本自体は削除されず、この本棚からのみ削除されます。`)) {
             bookshelf.books = bookshelf.books.filter(bookAsin => bookAsin !== asin);
             this.saveUserData();
             this.renderBookshelfList(); // Update the bookshelf management UI if open
@@ -1767,7 +1767,7 @@ class VirtualBookshelf {
                 this.updateDisplay();
             }
             
-            alert(`✅ 「${bookTitle}」を「${bookshelf.name}」から除外しました`);
+            alert(`「${bookTitle}」を「${bookshelf.name}」から除外しました`);
             
             // Close modal to show the updated bookshelf
             this.closeModal();
@@ -1780,14 +1780,14 @@ class VirtualBookshelf {
     async deleteBook(asin) {
         const book = this.books.find(b => b.asin === asin);
         if (!book) {
-            alert('❌ 指定された書籍が見つかりません');
+            alert('指定された書籍が見つかりません');
             return;
         }
 
-        const confirmMessage = `🗑️ 書籍「${book.title}」を完全削除しますか？
+        const confirmMessage = `書籍「${book.title}」を完全削除しますか？
 
-⚠️ この操作は取り消せません。
-📝 お気に入り、メモ、本棚からも削除されます。`;
+この操作は取り消せません。
+お気に入り、メモ、本棚からも削除されます。`;
 
         if (!confirm(confirmMessage)) {
             return;
@@ -1822,10 +1822,10 @@ class VirtualBookshelf {
             // モーダルを閉じる
             this.closeModal();
             
-            alert(`✅ 「${book.title}」を削除しました`);
+            alert(`「${book.title}」を削除しました`);
         } catch (error) {
             console.error('削除エラー:', error);
-            alert(`❌ 削除に失敗しました: ${error.message}`);
+            alert(`削除に失敗しました: ${error.message}`);
         }
     }
 
@@ -1897,7 +1897,7 @@ class VirtualBookshelf {
 
         const newBooks = totalBooks - existingBooks;
         statsElement.innerHTML = `
-            📊 総数: ${totalBooks}冊 | 新規: ${newBooks}冊 | インポート済み: ${existingBooks}冊 | 表示中: ${visibleBooks}冊
+            総数: ${totalBooks}冊 | 新規: ${newBooks}冊 | インポート済み: ${existingBooks}冊 | 表示中: ${visibleBooks}冊
         `;
     }
     
@@ -1954,7 +1954,7 @@ class VirtualBookshelf {
         const selectedBooks = selectedIndices.map(index => this.pendingImportBooks[index]);
         
         if (selectedBooks.length === 0) {
-            alert('📚 インポートする本を選択してください');
+            alert('インポートする本を選択してください');
             return;
         }
         
@@ -1973,7 +1973,7 @@ class VirtualBookshelf {
             
         } catch (error) {
             console.error('選択インポートエラー:', error);
-            alert(`❌ インポートに失敗しました: ${error.message}`);
+            alert(`インポートに失敗しました: ${error.message}`);
         }
     }
     
@@ -2002,19 +2002,19 @@ class VirtualBookshelf {
         const newUpdatedAsin = updatedAsinInput.value.trim();
 
         if (!newTitle) {
-            alert('📖 タイトルは必須です');
+            alert('タイトルは必須です');
             return;
         }
 
         // オリジナルASINの妥当性チェック
         if (!newOriginalAsin || !this.bookManager.isValidASIN(newOriginalAsin)) {
-            alert('🔖 オリジナルASINは10桁の英数字で入力してください（例: B07ABC1234）');
+            alert('オリジナルASINは10桁の英数字で入力してください（例: B07ABC1234）');
             return;
         }
 
         // 変更後ASINの妥当性チェック
         if (newUpdatedAsin && !this.bookManager.isValidASIN(newUpdatedAsin)) {
-            alert('🔗 変更後ASINは10桁の英数字で入力してください（例: B07ABC1234）');
+            alert('変更後ASINは10桁の英数字で入力してください（例: B07ABC1234）');
             return;
         }
 
@@ -2022,7 +2022,7 @@ class VirtualBookshelf {
         if (newOriginalAsin !== asin) {
             const existingBook = this.books.find(book => book.asin === newOriginalAsin);
             if (existingBook) {
-                alert('🔖 このオリジナルASINは既に使用されています');
+                alert('このオリジナルASINは既に使用されています');
                 return;
             }
         }
@@ -2074,7 +2074,7 @@ class VirtualBookshelf {
                 this.updateStats();
                 this.markDirty();
 
-                alert('✅ 本の情報を更新しました');
+                alert('本の情報を更新しました');
 
                 // 編集モードから表示モードに戻る
                 if (newOriginalAsin !== asin) {
@@ -2091,7 +2091,7 @@ class VirtualBookshelf {
 
         } catch (error) {
             console.error('本の更新エラー:', error);
-            alert(`❌ 更新に失敗しました: ${error.message}`);
+            alert(`更新に失敗しました: ${error.message}`);
         }
     }
 
@@ -2200,7 +2200,7 @@ class VirtualBookshelf {
     async importFromFile() {
         const fileInput = document.getElementById('kindle-file-input');
         if (!fileInput.files || fileInput.files.length === 0) {
-            alert('📁 ファイルを選択してください');
+            alert('ファイルを選択してください');
             return;
         }
 
@@ -2214,7 +2214,7 @@ class VirtualBookshelf {
             
         } catch (error) {
             console.error('ファイル読み込みエラー:', error);
-            alert(`❌ ファイルの読み込みに失敗しました: ${error.message}`);
+            alert(`ファイルの読み込みに失敗しました: ${error.message}`);
         }
     }
 
@@ -2230,7 +2230,7 @@ class VirtualBookshelf {
         const resultsDiv = document.getElementById('import-results');
         resultsDiv.innerHTML = `
             <div class="import-summary">
-                <h3>📊 インポート結果</h3>
+                <h3>インポート結果</h3>
                 <div class="import-stats">
                     <div class="stat-item">
                         <span class="stat-value">${results.total}</span>
@@ -2250,7 +2250,7 @@ class VirtualBookshelf {
                     </div>
                 </div>
                 <p class="import-note">
-                    ✅ インポートが完了しました。新規追加: ${results.added}冊、更新: ${results.updated}冊
+                    インポートが完了しました。新規追加: ${results.added}冊、更新: ${results.updated}冊
                 </p>
             </div>
         `;
@@ -2339,10 +2339,10 @@ class VirtualBookshelf {
      */
     formatLabel(format) {
         const labels = {
-            paper: '📕 紙の本',
-            kindle: '📱 Kindle',
-            epub: '📗 EPUB',
-            pdf: '📄 PDF'
+            paper: '紙の本',
+            kindle: 'Kindle',
+            epub: 'EPUB',
+            pdf: 'PDF'
         };
         return labels[format] || '';
     }
@@ -2378,7 +2378,7 @@ class VirtualBookshelf {
             return;
         }
 
-        this.showStatusMessage('book-search-status', 'loading', '🔍 検索中...');
+        this.showStatusMessage('book-search-status', 'loading', '検索中...');
         searchBtn.disabled = true;
         resultsDiv.innerHTML = '';
 
@@ -2386,7 +2386,7 @@ class VirtualBookshelf {
             const results = await this.bookManager.searchBooksByKeyword(query);
 
             if (results.length === 0) {
-                this.showStatusMessage('book-search-status', 'error', '❌ 見つかりませんでした。キーワードを変えるか、ISBN/ASINで追加してください。');
+                this.showStatusMessage('book-search-status', 'error', '見つかりませんでした。キーワードを変えるか、ISBN/ASINで追加してください。');
                 return;
             }
 
@@ -2394,7 +2394,7 @@ class VirtualBookshelf {
             this.renderBookSearchResults(results);
         } catch (error) {
             console.error('書籍検索エラー:', error);
-            this.showStatusMessage('book-search-status', 'error', `❌ 検索に失敗しました: ${error.message}`);
+            this.showStatusMessage('book-search-status', 'error', `検索に失敗しました: ${error.message}`);
         } finally {
             searchBtn.disabled = false;
         }
@@ -2420,7 +2420,7 @@ class VirtualBookshelf {
                 <div class="book-search-result">
                     ${result.thumbnail ?
                         `<img class="book-search-thumb" src="${this.escapeHtml(result.thumbnail)}" alt="" loading="lazy">` :
-                        '<div class="book-search-thumb-placeholder">📖</div>'
+                        '<div class="book-search-thumb-placeholder"></div>'
                     }
                     <div class="book-search-result-info">
                         <div class="book-search-result-title">${this.escapeHtml(result.title)}</div>
@@ -2432,7 +2432,7 @@ class VirtualBookshelf {
                     </div>
                     <button class="btn btn-small ${exists ? 'btn-secondary' : 'btn-primary'} book-search-add"
                             data-index="${index}" ${(!result.identifier || exists) ? 'disabled' : ''}>
-                        ${exists ? '追加済み' : '➕ 追加'}
+                        ${exists ? '追加済み' : '追加'}
                     </button>
                 </div>
             `;
@@ -2467,7 +2467,7 @@ class VirtualBookshelf {
             };
 
             const newBook = await this.bookManager.addBookManually(bookData);
-            btn.textContent = '✅ 追加済み';
+            btn.textContent = '追加済み';
             btn.classList.remove('btn-primary');
             btn.classList.add('btn-secondary');
             this.showAddBookSuccess(newBook);
@@ -2479,8 +2479,8 @@ class VirtualBookshelf {
         } catch (error) {
             console.error('追加エラー:', error);
             btn.disabled = false;
-            btn.textContent = '➕ 追加';
-            alert(`❌ 追加に失敗しました: ${error.message}`);
+            btn.textContent = '追加';
+            alert(`追加に失敗しました: ${error.message}`);
         }
     }
 
@@ -2490,7 +2490,7 @@ class VirtualBookshelf {
     async startBarcodeScan() {
         if (!('BarcodeDetector' in window)) {
             this.showStatusMessage('barcode-status', 'error',
-                '❌ このブラウザはバーコード読み取り非対応です（Chrome/Edge推奨）。ISBNを直接入力してください。');
+                'このブラウザはバーコード読み取り非対応です（Chrome/Edge推奨）。ISBNを直接入力してください。');
             return;
         }
 
@@ -2507,7 +2507,7 @@ class VirtualBookshelf {
 
             document.getElementById('barcode-start').style.display = 'none';
             document.getElementById('barcode-stop').style.display = '';
-            this.showStatusMessage('barcode-status', 'loading', '📷 バーコードを探しています…（978で始まる上段のバーコード）');
+            this.showStatusMessage('barcode-status', 'loading', 'バーコードを探しています…（978で始まる上段のバーコード）');
 
             this.barcodeScanTimer = setInterval(async () => {
                 try {
@@ -2517,7 +2517,7 @@ class VirtualBookshelf {
                         if (/^97[89]\d{10}$/.test(code.rawValue)) {
                             const isbn = code.rawValue;
                             this.stopBarcodeScan();
-                            this.showStatusMessage('barcode-status', 'success', `✅ ISBNを読み取りました: ${isbn}`);
+                            this.showStatusMessage('barcode-status', 'success', `ISBNを読み取りました: ${isbn}`);
                             document.getElementById('manual-asin').value = isbn;
                             this.switchAddBookTab('code');
                             this.fetchBookInfoFromASIN();
@@ -2530,7 +2530,7 @@ class VirtualBookshelf {
             }, 300);
         } catch (error) {
             console.error('カメラ起動エラー:', error);
-            this.showStatusMessage('barcode-status', 'error', `❌ カメラを起動できませんでした: ${error.message}`);
+            this.showStatusMessage('barcode-status', 'error', `カメラを起動できませんでした: ${error.message}`);
         }
     }
 
@@ -2599,7 +2599,7 @@ class VirtualBookshelf {
         document.getElementById('manual-asin').value = asin;
         document.getElementById('manual-asin').readOnly = true;
         
-        alert(`⚠️ 書籍情報の自動取得に失敗しました。\nASIN: ${asin}\n\n手動でタイトルと著者を入力してください。`);
+        alert(`書籍情報の自動取得に失敗しました。\nASIN: ${asin}\n\n手動でタイトルと著者を入力してください。`);
     }
 
     /**
@@ -2634,7 +2634,7 @@ class VirtualBookshelf {
         }
 
         // ローディング状態を表示
-        this.showASINStatus('loading', '📥 書籍情報を取得中...');
+        this.showASINStatus('loading', '書籍情報を取得中...');
         fetchBtn.disabled = true;
         fetchBtn.textContent = '取得中...';
 
@@ -2649,20 +2649,20 @@ class VirtualBookshelf {
 
             // 取得結果に応じてメッセージを表示
             if (bookData.title && bookData.title !== 'タイトル未取得' && bookData.title !== '') {
-                this.showASINStatus('success', `✅ 自動取得成功: ${bookData.title}`);
+                this.showASINStatus('success', `自動取得成功: ${bookData.title}`);
             } else {
-                this.showASINStatus('error', '❌ 情報取得できませんでした。手動で入力してください。');
+                this.showASINStatus('error', '情報取得できませんでした。手動で入力してください。');
                 // 自動取得失敗の場合、タイトルフィールドにフォーカス
                 titleInput.focus();
             }
 
         } catch (error) {
             console.error('書籍情報取得エラー:', error);
-            this.showASINStatus('error', '❌ 取得に失敗しました。手動で入力してください。');
+            this.showASINStatus('error', '取得に失敗しました。手動で入力してください。');
         } finally {
             // ボタンを元に戻す
             fetchBtn.disabled = false;
-            fetchBtn.textContent = '📥 自動取得';
+            fetchBtn.textContent = '自動取得';
         }
     }
 
@@ -2701,12 +2701,12 @@ class VirtualBookshelf {
         }
 
         if (!asin) {
-            alert('📝 ASINを入力してください');
+            alert('ASINを入力してください');
             return;
         }
 
         if (!title) {
-            alert('📝 タイトルを入力してください');
+            alert('タイトルを入力してください');
             return;
         }
 
@@ -2731,7 +2731,7 @@ class VirtualBookshelf {
 
         } catch (error) {
             console.error('追加エラー:', error);
-            alert(`❌ 追加に失敗しました: ${error.message}`);
+            alert(`追加に失敗しました: ${error.message}`);
         }
     }
 
@@ -2742,7 +2742,7 @@ class VirtualBookshelf {
         const resultsDiv = document.getElementById('add-book-results');
         resultsDiv.innerHTML = `
             <div class="add-success">
-                <h3>✅ 書籍を追加しました</h3>
+                <h3>書籍を追加しました</h3>
                 <div class="added-book-info">
                     <p><strong>タイトル:</strong> ${book.title}</p>
                     <p><strong>著者:</strong> ${book.authors}</p>
@@ -2808,11 +2808,11 @@ class VirtualBookshelf {
      * 蔵書データをファイルとしてエクスポート
      */
     exportUnifiedData() {
-        console.log('📦 エクスポート開始...');
+        console.log('エクスポート開始...');
 
         const exportData = this.buildUnifiedData();
 
-        console.log(`📊 エクスポートデータ: ${exportData.stats.totalBooks}冊, ${exportData.stats.notesCount}メモ`);
+        console.log(`エクスポートデータ: ${exportData.stats.totalBooks}冊, ${exportData.stats.notesCount}メモ`);
 
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -2824,7 +2824,7 @@ class VirtualBookshelf {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        alert('📦 library.json をエクスポートしました！');
+        alert('library.json をエクスポートしました！');
     }
 
     /**
@@ -2847,14 +2847,14 @@ class VirtualBookshelf {
      */
     async saveToGitHub() {
         if (!this.githubSync.isReady()) {
-            this.showStatusMessage('github-sync-status', 'error', '🔐 先にGitHubでサインインしてください');
+            this.showStatusMessage('github-sync-status', 'error', '先にGitHubでサインインしてください');
             this.githubSignIn();
             return;
         }
 
         const btn = document.getElementById('github-save');
         btn.disabled = true;
-        this.showStatusMessage('github-sync-status', 'loading', '☁️ GitHubに保存中...');
+        this.showStatusMessage('github-sync-status', 'loading', 'GitHubに保存中...');
 
         try {
             const exportData = this.buildUnifiedData();
@@ -2867,7 +2867,7 @@ class VirtualBookshelf {
                 try {
                     const normalize = (data) => JSON.stringify({ ...data, exportDate: null });
                     if (normalize(JSON.parse(existing.content)) === normalize(exportData)) {
-                        this.showStatusMessage('github-sync-status', 'success', '✅ GitHub上のデータと同一のため、コミットは不要でした');
+                        this.showStatusMessage('github-sync-status', 'success', 'GitHub上のデータと同一のため、コミットは不要でした');
                         this.clearDirty();
                         return;
                     }
@@ -2877,11 +2877,11 @@ class VirtualBookshelf {
             }
 
             await this.githubSync.commitFile(content, message);
-            this.showStatusMessage('github-sync-status', 'success', `✅ GitHubに保存しました（${exportData.stats.totalBooks}冊）`);
+            this.showStatusMessage('github-sync-status', 'success', `GitHubに保存しました（${exportData.stats.totalBooks}冊）`);
             this.clearDirty();
         } catch (error) {
             console.error('GitHub保存エラー:', error);
-            this.showStatusMessage('github-sync-status', 'error', `❌ ${error.message}`);
+            this.showStatusMessage('github-sync-status', 'error', `${error.message}`);
         } finally {
             btn.disabled = false;
         }
@@ -2892,22 +2892,22 @@ class VirtualBookshelf {
      */
     async loadFromGitHub() {
         if (!this.githubSync.isReady()) {
-            this.showStatusMessage('github-sync-status', 'error', '🔐 先にGitHubでサインインしてください');
+            this.showStatusMessage('github-sync-status', 'error', '先にGitHubでサインインしてください');
             this.githubSignIn();
             return;
         }
 
         if (this.hasUnsavedChanges) {
-            const proceed = confirm('⚠️ 未保存の変更があります。\nGitHub上のデータで上書きすると、この変更は失われます。\n\n続行しますか？');
+            const proceed = confirm('未保存の変更があります。\nGitHub上のデータで上書きすると、この変更は失われます。\n\n続行しますか？');
             if (!proceed) return;
         }
 
-        this.showStatusMessage('github-sync-status', 'loading', '🔄 GitHubから読み込み中...');
+        this.showStatusMessage('github-sync-status', 'loading', 'GitHubから読み込み中...');
 
         try {
             const file = await this.githubSync.getFile();
             if (!file) {
-                this.showStatusMessage('github-sync-status', 'error', '❌ GitHub上に library.json が見つかりません');
+                this.showStatusMessage('github-sync-status', 'error', 'GitHub上に library.json が見つかりません');
                 return;
             }
 
@@ -2918,7 +2918,7 @@ class VirtualBookshelf {
             window.location.reload();
         } catch (error) {
             console.error('GitHub読込エラー:', error);
-            this.showStatusMessage('github-sync-status', 'error', `❌ ${error.message}`);
+            this.showStatusMessage('github-sync-status', 'error', `${error.message}`);
         }
     }
 
@@ -2990,7 +2990,7 @@ class VirtualBookshelf {
     saveGitHubSettings() {
         this.githubSync.setToken(document.getElementById('github-token').value.trim());
         this.updateGitHubUI();
-        this.showStatusMessage('github-settings-status', 'success', '✅ 保存しました');
+        this.showStatusMessage('github-settings-status', 'success', '保存しました');
     }
 
     /**
@@ -2998,17 +2998,17 @@ class VirtualBookshelf {
      */
     async testGitHubConnection() {
         this.githubSync.setToken(document.getElementById('github-token').value.trim());
-        this.showStatusMessage('github-settings-status', 'loading', '🔌 接続を確認中...');
+        this.showStatusMessage('github-settings-status', 'loading', '接続を確認中...');
 
         try {
             const result = await this.githubSync.verifyAccess();
             if (result.canPush) {
-                this.showStatusMessage('github-settings-status', 'success', `✅ ${result.fullName} に書き込み可能です`);
+                this.showStatusMessage('github-settings-status', 'success', `${result.fullName} に書き込み可能です`);
             } else {
-                this.showStatusMessage('github-settings-status', 'error', `⚠️ ${result.fullName} への書き込み権限がありません（トークンのContents権限を確認してください）`);
+                this.showStatusMessage('github-settings-status', 'error', `${result.fullName} への書き込み権限がありません（トークンのContents権限を確認してください）`);
             }
         } catch (error) {
-            this.showStatusMessage('github-settings-status', 'error', `❌ ${error.message}`);
+            this.showStatusMessage('github-settings-status', 'error', `${error.message}`);
         }
     }
 
@@ -3016,7 +3016,7 @@ class VirtualBookshelf {
      * 蔵書を全てクリア
      */
     async clearLibrary() {
-        const confirmMessage = `🗑️ 全データを完全にクリアしますか？
+        const confirmMessage = `全データを完全にクリアしますか？
 
 この操作により以下のデータが削除されます：
 • 全ての書籍データ
@@ -3063,10 +3063,10 @@ class VirtualBookshelf {
             this.updateDisplay();
             this.updateStats();
             
-            alert('✅ 全データを完全にクリアしました');
+            alert('全データを完全にクリアしました');
         } catch (error) {
             console.error('蔵書クリア中にエラーが発生しました:', error);
-            alert('❌ 蔵書のクリアに失敗しました: ' + error.message);
+            alert('蔵書のクリアに失敗しました: ' + error.message);
         } finally {
             this.hideLoading();
         }
@@ -3111,7 +3111,7 @@ class VirtualBookshelf {
             
             const textOnlyClass = this.showImagesInOverview ? '' : 'text-only';
             const isPublic = bookshelf.isPublic || false;
-            const publicBadge = isPublic ? '<span class="public-badge">📤 公開中</span>' : '';
+            const publicBadge = isPublic ? '<span class="public-badge">公開中</span>' : '';
 
 
 
@@ -3120,8 +3120,8 @@ class VirtualBookshelf {
                     <div class="bookshelf-preview-header">
                         <h3>${bookshelf.emoji || '📚'} ${bookshelf.name} ${publicBadge}</h3>
                         <div class="bookshelf-preview-actions">
-                            <button class="btn btn-small btn-secondary select-bookshelf" data-bookshelf-id="${bookshelf.id}">📚 表示</button>
-                            ${isPublic ? `<button class="btn btn-small btn-primary open-static-page" data-bookshelf-id="${bookshelf.id}">🌐 静的ページ</button>` : ''}
+                            <button class="btn btn-small btn-secondary select-bookshelf" data-bookshelf-id="${bookshelf.id}">表示</button>
+                            ${isPublic ? `<button class="btn btn-small btn-primary open-static-page" data-bookshelf-id="${bookshelf.id}">静的ページ</button>` : ''}
                         </div>
                     </div>
                     <p>${bookshelf.description || ''}</p>
@@ -3133,7 +3133,7 @@ class VirtualBookshelf {
                             if (book && book.productImage) {
                                 return `<div class="bookshelf-preview-book"><img src="${this.bookManager.getProductImageUrl(book)}" alt="${book.title}"></div>`;
                             } else {
-                                return '<div class="bookshelf-preview-book bookshelf-preview-placeholder">📖</div>';
+                                return '<div class="bookshelf-preview-book bookshelf-preview-placeholder"></div>';
                             }
                         }).join('')}
                     </div>
@@ -3194,14 +3194,14 @@ class VirtualBookshelf {
         this.saveUserData();
         
         const button = document.getElementById('toggle-bookshelf-display');
-        button.textContent = this.showImagesInOverview ? '🖼️ 画像表示切替' : '📝 テキストのみ';
+        button.textContent = this.showImagesInOverview ? '画像表示切替' : 'テキストのみ';
         
         this.renderBookshelfOverview();
     }
 
     showError(message) {
         const bookshelf = document.getElementById('bookshelf');
-        bookshelf.innerHTML = `<div class="error-message">❌ ${message}</div>`;
+        bookshelf.innerHTML = `<div class="error-message">${message}</div>`;
     }
     
     generateStarRating(rating) {
@@ -3209,7 +3209,7 @@ class VirtualBookshelf {
         for (let i = 1; i <= 5; i++) {
             const isActive = i <= rating ? 'active' : '';
             const color = i <= rating ? '#ffa500' : '#ddd';
-            stars += `<span class="star ${isActive}" data-rating="${i}" style="color: ${color};">⭐</span>`;
+            stars += `<span class="star ${isActive}" data-rating="${i}" style="color: ${color};">★</span>`;
         }
         return stars;
     }
@@ -3218,7 +3218,7 @@ class VirtualBookshelf {
         if (!rating || rating === 0) return '';
         let stars = '';
         for (let i = 1; i <= rating; i++) {
-            stars += '⭐';
+            stars += '★';
         }
         return `<div class="book-rating"><span class="stars">${stars}</span></div>`;
     }
@@ -3322,7 +3322,7 @@ class VirtualBookshelf {
             this.updateBookshelfSelector();
             this.renderBookshelfList();
             
-            console.log(`📚 本棚「${draggedBookshelf.name}」を移動しました`);
+            console.log(`本棚「${draggedBookshelf.name}」を移動しました`);
         }
     }
 
@@ -3395,7 +3395,7 @@ class VirtualBookshelf {
                 // 成功時の表示
                 resultsContent.innerHTML = `
                     <div class="success-message">
-                        <h3>✅ 静的ページが生成されました！</h3>
+                        <h3>静的ページが生成されました！</h3>
                         <div class="generation-info">
                             <p><strong>本棚:</strong> ${result.bookshelf.emoji} ${result.bookshelf.name}</p>
                             <p><strong>書籍数:</strong> ${result.totalBooks}冊</p>
@@ -3405,7 +3405,7 @@ class VirtualBookshelf {
                         </div>
 
                         <div class="form-actions">
-                            <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${this.currentShareBookshelf.staticPageInfo.url}')">📋 URLをコピー</button>
+                            <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${this.currentShareBookshelf.staticPageInfo.url}')">URLをコピー</button>
                             <button class="btn btn-secondary" onclick="window.bookshelf.closeStaticShareModal()">閉じる</button>
                         </div>
                     </div>
@@ -3419,7 +3419,7 @@ class VirtualBookshelf {
                 // エラー時の表示
                 resultsContent.innerHTML = `
                     <div class="error-message">
-                        <h3>❌ 生成に失敗しました</h3>
+                        <h3>生成に失敗しました</h3>
                         <p>エラー: ${result.error}</p>
                         <button class="btn btn-secondary" onclick="document.getElementById('static-share-modal').querySelector('#share-generation-form').style.display='block'; document.getElementById('share-results').style.display='none';">再試行</button>
                     </div>
@@ -3432,7 +3432,7 @@ class VirtualBookshelf {
             console.error('静的ページ生成エラー:', error);
             resultsContent.innerHTML = `
                 <div class="error-message">
-                    <h3>❌ 生成中にエラーが発生しました</h3>
+                    <h3>生成中にエラーが発生しました</h3>
                     <p>エラー: ${error.message}</p>
                     <button class="btn btn-secondary" onclick="document.getElementById('static-share-modal').querySelector('#share-generation-form').style.display='block'; document.getElementById('share-results').style.display='none';">再試行</button>
                 </div>
@@ -3442,7 +3442,7 @@ class VirtualBookshelf {
         } finally {
             // ボタンを元に戻す
             generateBtn.disabled = false;
-            generateBtn.textContent = '📄 静的ページを生成';
+            generateBtn.textContent = '静的ページを生成';
         }
     }
 
@@ -3606,7 +3606,7 @@ function setupCoverFallback(img) {
             const placeholder = document.createElement('div');
             placeholder.className = img.classList.contains('book-detail-cover') ?
                 'book-detail-cover-placeholder' : 'book-cover-placeholder';
-            placeholder.textContent = img.alt || '📖';
+            placeholder.textContent = img.alt || '';
             img.replaceWith(placeholder);
         }
     };

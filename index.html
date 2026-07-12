@@ -3,31 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Bookshelf - 読書ライブラリ</title>
-    <meta name="description" content="個人読書コレクション - お気に入りの本を美しく展示">
-    
+    <title>liklik bukselp bilong mi — 私の小さな本棚</title>
+    <meta name="description" content="liklik bukselp bilong mi（私の小さな本棚）— シンプルモダンでちょっとシュールな、個人蔵書のためのバーチャル本棚">
+
     <!-- Open Graph for social sharing -->
-    <meta property="og:title" content="Virtual Bookshelf - 読書ライブラリ">
-    <meta property="og:description" content="お気に入りコレクション">
+    <meta property="og:title" content="liklik bukselp bilong mi — 私の小さな本棚">
+    <meta property="og:description" content="シンプルモダンでちょっとシュールな、個人蔵書のためのバーチャル本棚">
     <meta property="og:type" content="website">
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <meta property="og:site_name" content="liklik bukselp bilong mi">
+    <meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
     <link rel="stylesheet" href="css/bookshelf.css">
 
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <h1 class="header-title">📚 Virtual Bookshelf</h1>
-            <p class="header-subtitle">読書ライブラリ</p>
+            <a href="#" class="header-brand" aria-label="liklik bukselp bilong mi — ホーム">
+                <span class="header-mark" aria-hidden="true">
+                    <svg viewBox="0 0 40 40" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 11c-3-2.4-7-3-11-2.4v20c4-.6 8 0 11 2.4 3-2.4 7-3 11-2.4v-20c-4-.6-8 0-11 2.4z"/>
+                        <path d="M20 11v20"/>
+                    </svg>
+                </span>
+                <span class="header-wordmark">
+                    <span class="header-title">liklik bukselp bilong mi</span>
+                    <span class="header-subtitle">私の小さな本棚</span>
+                </span>
+            </a>
             
             <div class="header-controls">
                 <div class="bookshelf-controls">
                     <select id="bookshelf-selector" class="bookshelf-selector">
-                        <option value="all">📚 全ての本</option>
+                        <option value="all">全ての本</option>
                     </select>
-                    <button id="manage-bookshelves" class="btn btn-outline">📝 本棚管理</button>
-                    <button id="view-static-page" class="btn btn-secondary" style="display: none;">🌐 静的ページ</button>
+                    <button id="manage-bookshelves" class="btn btn-outline">本棚管理</button>
+                    <button id="view-static-page" class="btn btn-secondary" style="display: none;">静的ページ</button>
                 </div>
                 
                 <div class="view-toggle">
@@ -53,23 +66,23 @@
                         <div class="star-filter-checkboxes">
                             <label class="checkbox-label">
                                 <input type="checkbox" id="star-1" value="1" checked>
-                                ⭐ 星1
+                                ★ 星1
                             </label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="star-2" value="2" checked>
-                                ⭐⭐ 星2
+                                ★★ 星2
                             </label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="star-3" value="3" checked>
-                                ⭐⭐⭐ 星3
+                                ★★★ 星3
                             </label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="star-4" value="4" checked>
-                                ⭐⭐⭐⭐ 星4
+                                ★★★★ 星4
                             </label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="star-5" value="5" checked>
-                                ⭐⭐⭐⭐⭐ 星5
+                                ★★★★★ 星5
                             </label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="star-0" value="0" checked>
@@ -126,21 +139,21 @@
                     <div class="library-management">
                         <h3>蔵書管理</h3>
                         <div class="management-buttons">
-                            <button id="add-book-manually" class="btn btn-secondary">➕ 本を追加</button>
-                            <button id="import-kindle" class="btn btn-secondary">📥 Kindleインポート</button>
-                            <button id="export-unified" class="btn btn-secondary">💾 データエクスポート</button>
-                            <button id="clear-library" class="btn btn-danger">🗑️ 蔵書をクリア</button>
+                            <button id="add-book-manually" class="btn btn-secondary">本を追加</button>
+                            <button id="import-kindle" class="btn btn-secondary">Kindleインポート</button>
+                            <button id="export-unified" class="btn btn-secondary">データエクスポート</button>
+                            <button id="clear-library" class="btn btn-danger">蔵書をクリア</button>
                         </div>
                     </div>
 
                     <div class="github-sync-section">
                         <h3>GitHub同期</h3>
                         <div id="github-signed-out" class="management-buttons">
-                            <button id="github-signin" class="btn btn-primary">🔐 GitHubでサインイン</button>
+                            <button id="github-signin" class="btn btn-primary">GitHubでサインイン</button>
                         </div>
                         <div id="github-signed-in" class="management-buttons" style="display: none;">
-                            <button id="github-save" class="btn btn-primary">☁️ GitHubに保存</button>
-                            <button id="github-load" class="btn btn-secondary">🔄 GitHubから読込</button>
+                            <button id="github-save" class="btn btn-primary">GitHubに保存</button>
+                            <button id="github-load" class="btn btn-secondary">GitHubから読込</button>
                         </div>
                         <div id="github-sync-status" class="github-sync-status" style="display: none;"></div>
                         <button id="github-settings" class="github-settings-link">詳細設定（PAT / サインアウト）</button>
@@ -150,14 +163,14 @@
 
             <section class="bookshelf-container">
                 <div class="loading" id="loading">
-                    📚 本棚を準備中...
+                    本棚を準備中...
                 </div>
 
                 <!-- Bookshelf Overview Section -->
                 <div class="bookshelves-overview" id="bookshelves-overview" style="display: none;">
-                    <h2 class="section-title">📚 本棚一覧</h2>
+                    <h2 class="section-title">本棚一覧</h2>
                     <div class="bookshelf-overview-controls">
-                        <button id="toggle-bookshelf-display" class="btn btn-secondary">🖼️ 画像表示切替</button>
+                        <button id="toggle-bookshelf-display" class="btn btn-secondary">画像表示切替</button>
                     </div>
                     <div class="bookshelves-grid" id="bookshelves-grid">
                         <!-- Bookshelves overview will be loaded here -->
@@ -190,7 +203,8 @@
 
     <footer class="footer">
         <div class="container">
-            <p>© 2025 sgktmk | Powered by Kindle & GitHub Pages</p>
+            <p>liklik bukselp bilong mi — 私の小さな本棚</p>
+            <p class="footer-note">© 2025 sgktmk · sister site: <a href="https://www.sgktmk.com" target="_blank" rel="noopener">bikpela poteto bilong mi</a></p>
             <p>
                 <a href="https://github.com/sgktmk/my-bookshelf" target="_blank" rel="noopener">
                     GitHub Repository
@@ -214,7 +228,7 @@
         <div class="modal-content">
             <button class="modal-close" id="bookshelf-modal-close">×</button>
             <div class="modal-header">
-                <h2>📚 本棚管理</h2>
+                <h2>本棚管理</h2>
                 <button id="add-bookshelf" class="btn btn-primary">+ 新しい本棚</button>
             </div>
             <div id="bookshelves-list">
@@ -228,7 +242,7 @@
         <div class="modal-content">
             <button class="modal-close" id="bookshelf-form-modal-close">×</button>
             <div class="modal-header">
-                <h2 id="bookshelf-form-title">📚 新しい本棚</h2>
+                <h2 id="bookshelf-form-title">新しい本棚</h2>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -246,7 +260,7 @@
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="bookshelf-is-public">
-                        📤 この本棚を公開する（静的ページ生成可能）
+                        この本棚を公開する（静的ページ生成可能）
                     </label>
                 </div>
                 <div class="form-actions" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
@@ -262,13 +276,13 @@
         <div class="modal-content">
             <button class="modal-close" id="static-share-modal-close">×</button>
             <div class="modal-header">
-                <h2>📄 静的ページ生成</h2>
+                <h2>静的ページ生成</h2>
             </div>
             <div class="modal-body">
                 <div id="share-generation-form">
 
                     <div class="form-actions">
-                        <button id="generate-static-page" class="btn btn-primary">📄 静的ページを生成</button>
+                        <button id="generate-static-page" class="btn btn-primary">静的ページを生成</button>
                         <button id="cancel-static-share" class="btn btn-secondary">キャンセル</button>
                     </div>
                 </div>
@@ -287,7 +301,7 @@
         <div class="modal-content">
             <button class="modal-close" id="import-modal-close">×</button>
             <div class="modal-header">
-                <h2>📥 Kindleデータインポート</h2>
+                <h2>Kindleデータインポート</h2>
             </div>
             <div class="modal-body">
                 <div class="import-options">
@@ -299,12 +313,12 @@
 
                 </div>
                 <div id="book-selection" class="book-selection" style="display: none;">
-                    <h3>📚 インポートする本を選択</h3>
+                    <h3>インポートする本を選択</h3>
                     <div class="selection-controls">
                         <div class="filter-options" style="margin-bottom: 1rem;">
                             <label style="display: flex; align-items: center; gap: 0.5rem;">
                                 <input type="checkbox" id="hide-existing-books" checked>
-                                <span>📚 インポート済みの本を非表示にする</span>
+                                <span>インポート済みの本を非表示にする</span>
                             </label>
                         </div>
                         <button id="select-all-books" class="btn btn-small">全て選択</button>
@@ -331,24 +345,24 @@
         <div class="modal-content">
             <button class="modal-close" id="add-book-modal-close">×</button>
             <div class="modal-header">
-                <h2>➕ 本を追加</h2>
+                <h2>本を追加</h2>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="add-book-format">📚 本の形式</label>
+                    <label for="add-book-format">本の形式</label>
                     <select id="add-book-format">
                         <option value="auto" selected>自動判定（ISBN→紙、ASIN→Kindle）</option>
-                        <option value="paper">📕 紙の本</option>
-                        <option value="kindle">📱 Kindle</option>
-                        <option value="epub">📗 EPUB</option>
-                        <option value="pdf">📄 PDF</option>
+                        <option value="paper">紙の本</option>
+                        <option value="kindle">Kindle</option>
+                        <option value="epub">EPUB</option>
+                        <option value="pdf">PDF</option>
                     </select>
                 </div>
 
                 <div class="add-book-tabs">
-                    <button type="button" class="add-book-tab active" data-tab="search">🔍 検索して追加</button>
-                    <button type="button" class="add-book-tab" data-tab="code">🆔 ASIN / ISBN</button>
-                    <button type="button" class="add-book-tab" data-tab="barcode">📷 バーコード</button>
+                    <button type="button" class="add-book-tab active" data-tab="search">検索して追加</button>
+                    <button type="button" class="add-book-tab" data-tab="code">ASIN / ISBN</button>
+                    <button type="button" class="add-book-tab" data-tab="barcode">バーコード</button>
                 </div>
 
                 <!-- タイトル・著者検索タブ -->
@@ -357,7 +371,7 @@
                         <label for="book-search-query">タイトル・著者で検索</label>
                         <div class="asin-input-container">
                             <input type="text" id="book-search-query" placeholder="例: リーダブルコード" />
-                            <button type="button" id="book-search-btn" class="btn btn-small btn-primary">🔍 検索</button>
+                            <button type="button" id="book-search-btn" class="btn btn-small btn-primary">検索</button>
                         </div>
                         <small style="color: #666; display: block; margin-top: 0.25rem;">
                             Google Books から候補を検索し、クリックひとつで登録できます
@@ -373,7 +387,7 @@
                         <label for="manual-asin">ASIN / ISBN</label>
                         <div class="asin-input-container">
                             <input type="text" id="manual-asin" placeholder="B012345678 / 9784873119038 / AmazonのURL" />
-                            <button type="button" id="fetch-book-info" class="btn btn-small btn-secondary">📥 自動取得</button>
+                            <button type="button" id="fetch-book-info" class="btn btn-small btn-secondary">自動取得</button>
                         </div>
                         <small style="color: #666; display: block; margin-top: 0.25rem;">
                             ASIN (10桁)、ISBN-10 (10桁)、ISBN-13 (13桁) のいずれかを入力。
@@ -390,7 +404,7 @@
                         <input type="text" id="manual-authors" placeholder="著者名" />
                     </div>
 
-                    <button id="add-manually" class="btn btn-primary">➕ 蔵書に追加</button>
+                    <button id="add-manually" class="btn btn-primary">蔵書に追加</button>
                 </div>
 
                 <!-- バーコードスキャンタブ -->
@@ -403,7 +417,7 @@
                         <video id="barcode-video" playsinline muted style="display: none;"></video>
                     </div>
                     <div class="form-actions" style="margin-top: 0.5rem;">
-                        <button type="button" id="barcode-start" class="btn btn-primary">📷 スキャン開始</button>
+                        <button type="button" id="barcode-start" class="btn btn-primary">スキャン開始</button>
                         <button type="button" id="barcode-stop" class="btn btn-secondary" style="display: none;">⏹ 停止</button>
                     </div>
                     <div id="barcode-status" class="asin-status" style="display: none;"></div>
@@ -421,7 +435,7 @@
         <div class="modal-content">
             <button class="modal-close" id="github-settings-modal-close">×</button>
             <div class="modal-header">
-                <h2>⚙️ GitHub連携の詳細設定</h2>
+                <h2>GitHub連携の詳細設定</h2>
             </div>
             <div class="modal-body">
                 <p class="modal-description">

@@ -116,7 +116,7 @@ class HighlightsManager {
             container.textContent = '';
             const noHighlights = document.createElement('p');
             noHighlights.className = 'no-highlights';
-            noHighlights.textContent = '📖 この本にはハイライトがありません';
+            noHighlights.textContent = 'この本にはハイライトがありません';
             container.appendChild(noHighlights);
             return;
         }
@@ -124,7 +124,7 @@ class HighlightsManager {
         const highlightCount = highlights.length;
         let highlightsHTML = `
             <div class="highlights-header">
-                <span class="highlights-count">🎯 ${highlightCount}個のハイライト</span>
+                <span class="highlights-count">${highlightCount}個のハイライト</span>
                 <button class="btn btn-small toggle-highlights">全て表示</button>
             </div>
         `;
@@ -138,7 +138,7 @@ class HighlightsManager {
             highlightsHTML += `
                 <div class="highlight-item" data-index="${index}">
                     <div class="highlight-text">"${this.escapeHtml(highlight.text)}"</div>
-                    ${highlight.note ? `<div class="highlight-note">📝 ${this.escapeHtml(highlight.note)}</div>` : ''}
+                    ${highlight.note ? `<div class="highlight-note">${this.escapeHtml(highlight.note)}</div>` : ''}
                     ${highlight.location ? `<div class="highlight-location">${this.escapeHtml(highlight.location)}</div>` : ''}
                 </div>
             `;
@@ -151,7 +151,7 @@ class HighlightsManager {
                 highlightsHTML += `
                     <div class="highlight-item" data-index="${index + 3}">
                         <div class="highlight-text">"${this.escapeHtml(highlight.text)}"</div>
-                        ${highlight.note ? `<div class="highlight-note">📝 ${this.escapeHtml(highlight.note)}</div>` : ''}
+                        ${highlight.note ? `<div class="highlight-note">${this.escapeHtml(highlight.note)}</div>` : ''}
                         ${highlight.location ? `<div class="highlight-location">${this.escapeHtml(highlight.location)}</div>` : ''}
                     </div>
                 `;
