@@ -2156,3 +2156,115 @@ a { color: var(--accent); }
     .filter-section, .stats-section { padding: 1.25rem; }
     .book-detail-header { flex-direction: column; align-items: center; text-align: center; }
 }
+
+/* Bulk table edit mode */
+.bulk-edit-modal-content {
+    width: min(1320px, 96vw);
+    max-width: 1320px;
+}
+
+.bulk-edit-header {
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.bulk-edit-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.bulk-edit-summary {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+}
+
+.bulk-edit-table-wrap {
+    max-height: min(68vh, 760px);
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--surface);
+}
+
+.bulk-edit-table {
+    width: 100%;
+    min-width: 1120px;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.bulk-edit-table th,
+.bulk-edit-table td {
+    padding: 0.55rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+}
+
+.bulk-edit-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    text-align: left;
+    font-weight: 700;
+}
+
+.bulk-edit-table input,
+.bulk-edit-table select,
+.bulk-edit-table textarea {
+    width: 100%;
+    min-width: 0;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-xs);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+}
+
+.bulk-edit-table textarea {
+    min-width: 220px;
+    resize: vertical;
+}
+
+.bulk-edit-table .bulk-asin { min-width: 130px; }
+.bulk-edit-table .bulk-title { min-width: 240px; }
+.bulk-edit-table .bulk-authors { min-width: 180px; }
+.bulk-edit-table .bulk-acquired-time { min-width: 140px; }
+.bulk-edit-table .bulk-rating { min-width: 100px; }
+
+.bulk-row-actions {
+    min-width: 96px;
+    white-space: nowrap;
+}
+
+.bulk-row-new {
+    background: rgba(47, 143, 91, 0.08);
+}
+
+.bulk-row-delete {
+    background: rgba(207, 64, 51, 0.10);
+    opacity: 0.72;
+}
+
+.bulk-row-delete input,
+.bulk-row-delete select,
+.bulk-row-delete textarea {
+    text-decoration: line-through;
+}
+
+@media (max-width: 760px) {
+    .bulk-edit-header,
+    .bulk-edit-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
