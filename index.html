@@ -140,6 +140,7 @@
                         <h3>蔵書管理</h3>
                         <div class="management-buttons">
                             <button id="add-book-manually" class="btn btn-secondary">本を追加</button>
+                            <button id="bulk-edit-books" class="btn btn-secondary">表で一括編集</button>
                             <button id="import-kindle" class="btn btn-secondary">Kindleインポート</button>
                             <button id="export-unified" class="btn btn-secondary">データエクスポート</button>
                             <button id="clear-library" class="btn btn-danger">蔵書をクリア</button>
@@ -425,6 +426,44 @@
 
                 <div id="add-book-results" class="add-results" style="display: none;">
                     <!-- Addition results will be shown here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Bulk Table Edit Modal -->
+    <div id="bulk-edit-modal" class="modal">
+        <div class="modal-content bulk-edit-modal-content">
+            <button class="modal-close" id="bulk-edit-modal-close">×</button>
+            <div class="modal-header bulk-edit-header">
+                <div>
+                    <h2>表形式で一括追加・編集・削除</h2>
+                    <p class="modal-description">表示中の絞り込み結果を表で編集できます。行追加・削除予約後、「変更を保存」でまとめて反映します。</p>
+                </div>
+                <div class="bulk-edit-actions">
+                    <button id="bulk-add-row" class="btn btn-secondary">+ 行を追加</button>
+                    <button id="bulk-save-changes" class="btn btn-primary">変更を保存</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="bulk-edit-summary" class="bulk-edit-summary"></div>
+                <div class="bulk-edit-table-wrap">
+                    <table class="bulk-edit-table">
+                        <thead>
+                            <tr>
+                                <th>操作</th>
+                                <th>ASIN / ISBN *</th>
+                                <th>タイトル *</th>
+                                <th>著者</th>
+                                <th>形式</th>
+                                <th>購入日</th>
+                                <th>評価</th>
+                                <th>メモ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulk-edit-table-body"></tbody>
+                    </table>
                 </div>
             </div>
         </div>

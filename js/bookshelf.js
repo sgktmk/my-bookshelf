@@ -251,6 +251,11 @@ class VirtualBookshelf {
             this.showAddBookModal();
         });
 
+        const bulkEditBtn = document.getElementById('bulk-edit-books');
+        if (bulkEditBtn) {
+            bulkEditBtn.addEventListener('click', () => this.showBulkEditModal());
+        }
+
 
         // 統合エクスポートボタンは上で定義済み（export-library削除）
 
@@ -286,6 +291,21 @@ class VirtualBookshelf {
         const addBookModalClose = document.getElementById('add-book-modal-close');
         if (addBookModalClose) {
             addBookModalClose.addEventListener('click', () => this.closeAddBookModal());
+        }
+
+        const bulkEditModalClose = document.getElementById('bulk-edit-modal-close');
+        if (bulkEditModalClose) {
+            bulkEditModalClose.addEventListener('click', () => this.closeBulkEditModal());
+        }
+
+        const bulkAddRow = document.getElementById('bulk-add-row');
+        if (bulkAddRow) {
+            bulkAddRow.addEventListener('click', () => this.addBulkEditRow());
+        }
+
+        const bulkSaveChanges = document.getElementById('bulk-save-changes');
+        if (bulkSaveChanges) {
+            bulkSaveChanges.addEventListener('click', () => this.saveBulkEditChanges());
         }
 
         const bookshelfFormModalClose = document.getElementById('bookshelf-form-modal-close');
@@ -1341,6 +1361,213 @@ class VirtualBookshelf {
         // Clear modal body to prevent event listener conflicts
         const modalBody = document.getElementById('modal-body');
         modalBody.innerHTML = '';
+    }
+
+
+    showBulkEditModal() {
+        const modal = document.getElementById('bulk-edit-modal');
+        this.bulkEditRows = new Map();
+        const booksToEdit = [...this.filteredBooks];
+        const tableBody = document.getElementById('bulk-edit-table-body');
+        tableBody.textContent = '';
+
+        booksToEdit.forEach(book => this.addBulkEditRow(book));
+        this.updateBulkEditSummary();
+        modal.classList.add('show');
+    }
+
+    closeBulkEditModal() {
+        const modal = document.getElementById('bulk-edit-modal');
+        modal.classList.remove('show');
+        document.getElementById('bulk-edit-table-body').textContent = '';
+        this.bulkEditRows = new Map();
+    }
+
+    addBulkEditRow(book = null) {
+        const tableBody = document.getElementById('bulk-edit-table-body');
+        const rowId = book ? `existing-${book.asin}` : `new-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        const note = book ? (this.userData.notes[book.asin] || { memo: '', rating: 0 }) : { memo: '', rating: 0 };
+        const acquiredDate = book?.acquiredTime ? new Date(book.acquiredTime).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        const tr = document.createElement('tr');
+        tr.className = book ? 'bulk-row-existing' : 'bulk-row-new';
+        tr.dataset.rowId = rowId;
+        tr.dataset.originalAsin = book?.asin || '';
+        tr.innerHTML = `
+            <td class="bulk-row-actions">
+                <button type="button" class="btn btn-small ${book ? 'btn-danger' : 'btn-secondary'} bulk-delete-row">${book ? '削除' : '行削除'}</button>
+                <button type="button" class="btn btn-small btn-secondary bulk-undo-delete" style="display:none;">取消</button>
+            </td>
+            <td><input class="bulk-asin" type="text" value="${this.escapeHtml(book?.asin || '')}" placeholder="B012345678 / 978..." /></td>
+            <td><input class="bulk-title" type="text" value="${this.escapeHtml(book?.title || '')}" placeholder="タイトル" /></td>
+            <td><input class="bulk-authors" type="text" value="${this.escapeHtml(book?.authors || '')}" placeholder="著者" /></td>
+            <td>
+                <select class="bulk-format">
+                    <option value="" ${!book?.format ? 'selected' : ''}>未設定</option>
+                    <option value="paper" ${book?.format === 'paper' ? 'selected' : ''}>紙</option>
+                    <option value="kindle" ${book?.format === 'kindle' ? 'selected' : ''}>Kindle</option>
+                    <option value="epub" ${book?.format === 'epub' ? 'selected' : ''}>EPUB</option>
+                    <option value="pdf" ${book?.format === 'pdf' ? 'selected' : ''}>PDF</option>
+                </select>
+            </td>
+            <td><input class="bulk-acquired-time" type="date" value="${acquiredDate}" /></td>
+            <td>
+                <select class="bulk-rating">
+                    ${[0,1,2,3,4,5].map(r => `<option value="${r}" ${Number(note.rating || 0) === r ? 'selected' : ''}>${r === 0 ? '未評価' : '★'.repeat(r)}</option>`).join('')}
+                </select>
+            </td>
+            <td><textarea class="bulk-memo" rows="2" placeholder="メモ">${this.escapeHtml(note.memo || '')}</textarea></td>
+        `;
+        tableBody.appendChild(tr);
+        tr.querySelector('.bulk-delete-row').addEventListener('click', () => this.markBulkRowForDeletion(tr));
+        tr.querySelector('.bulk-undo-delete').addEventListener('click', () => this.undoBulkRowDeletion(tr));
+        tr.querySelectorAll('input, select, textarea').forEach(input => {
+            input.addEventListener('input', () => this.updateBulkEditSummary());
+            input.addEventListener('change', () => this.updateBulkEditSummary());
+        });
+        this.updateBulkEditSummary();
+    }
+
+    markBulkRowForDeletion(row) {
+        if (row.dataset.originalAsin) {
+            row.classList.add('bulk-row-delete');
+            row.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
+            row.querySelector('.bulk-delete-row').style.display = 'none';
+            row.querySelector('.bulk-undo-delete').style.display = '';
+        } else {
+            row.remove();
+        }
+        this.updateBulkEditSummary();
+    }
+
+    undoBulkRowDeletion(row) {
+        row.classList.remove('bulk-row-delete');
+        row.querySelectorAll('input, select, textarea').forEach(el => el.disabled = false);
+        row.querySelector('.bulk-delete-row').style.display = '';
+        row.querySelector('.bulk-undo-delete').style.display = 'none';
+        this.updateBulkEditSummary();
+    }
+
+    getBulkEditRows() {
+        return Array.from(document.querySelectorAll('#bulk-edit-table-body tr'));
+    }
+
+    updateBulkEditSummary() {
+        const rows = this.getBulkEditRows();
+        const added = rows.filter(row => !row.dataset.originalAsin).length;
+        const deleted = rows.filter(row => row.classList.contains('bulk-row-delete')).length;
+        const summary = document.getElementById('bulk-edit-summary');
+        if (summary) summary.textContent = `表示中 ${rows.length} 行 / 追加予定 ${added} 件 / 削除予定 ${deleted} 件`;
+    }
+
+    async saveBulkEditChanges() {
+        const rows = this.getBulkEditRows();
+        const seenAsins = new Set();
+        const errors = [];
+        const operations = [];
+
+        rows.forEach((row, index) => {
+            const rowNo = index + 1;
+            const originalAsin = row.dataset.originalAsin;
+            if (row.classList.contains('bulk-row-delete')) {
+                operations.push({ type: 'delete', originalAsin });
+                return;
+            }
+            const asin = row.querySelector('.bulk-asin').value.trim().replace(/[-\s]/g, '').toUpperCase();
+            const title = row.querySelector('.bulk-title').value.trim();
+            const authors = row.querySelector('.bulk-authors').value.trim() || '著者未設定';
+            const format = row.querySelector('.bulk-format').value;
+            const acquiredDate = row.querySelector('.bulk-acquired-time').value;
+            const rating = parseInt(row.querySelector('.bulk-rating').value, 10) || 0;
+            const memo = row.querySelector('.bulk-memo').value;
+
+            if (!asin || !this.bookManager.isValidIdentifier(asin)) errors.push(`${rowNo}行目: ASIN / ISBN が不正です`);
+            if (!title) errors.push(`${rowNo}行目: タイトルは必須です`);
+            if (seenAsins.has(asin)) errors.push(`${rowNo}行目: ASIN / ISBN が表内で重複しています`);
+            seenAsins.add(asin);
+
+            operations.push({
+                type: originalAsin ? 'update' : 'add',
+                originalAsin,
+                data: {
+                    asin,
+                    title,
+                    authors,
+                    acquiredTime: acquiredDate ? new Date(acquiredDate).getTime() : Date.now(),
+                    readStatus: 'UNKNOWN',
+                    productImage: `https://images-na.ssl-images-amazon.com/images/P/${asin}.01.L.jpg`,
+                    format: format || undefined,
+                    memo,
+                    rating
+                }
+            });
+        });
+
+        operations.forEach(op => {
+            if (op.type === 'add' && this.books.some(book => book.asin === op.data.asin)) {
+                errors.push(`追加行: ${op.data.asin} は既に蔵書に存在します`);
+            }
+            if (op.type === 'update' && op.originalAsin !== op.data.asin && this.books.some(book => book.asin === op.data.asin)) {
+                errors.push(`更新行: ${op.data.asin} は既に蔵書に存在します`);
+            }
+        });
+
+        if (errors.length > 0) {
+            alert(`保存できません:\n\n${errors.join('\n')}`);
+            return;
+        }
+
+        if (!confirm('表の変更をまとめて保存しますか？')) return;
+
+        try {
+            let added = 0, updated = 0, deleted = 0;
+            for (const op of operations) {
+                if (op.type === 'delete') {
+                    await this.bookManager.deleteBook(op.originalAsin, true);
+                    this.removeUserDataForBook(op.originalAsin);
+                    deleted++;
+                } else if (op.type === 'add') {
+                    const { memo, rating, ...bookData } = op.data;
+                    await this.bookManager.addBookManually(bookData);
+                    this.userData.notes[op.data.asin] = { memo, rating };
+                    added++;
+                } else if (op.type === 'update') {
+                    const { memo, rating, ...bookData } = op.data;
+                    const updateData = { ...bookData, format: bookData.format || undefined };
+                    await this.bookManager.updateBook(op.originalAsin, updateData);
+                    if (op.originalAsin !== op.data.asin) this.migrateUserData(op.originalAsin, op.data.asin);
+                    this.userData.notes[op.data.asin] = { memo, rating };
+                    updated++;
+                }
+            }
+
+            this.saveUserData();
+            this.books = this.bookManager.getAllBooks();
+            this.selectedBooks.clear();
+            this.applyFilters();
+            this.updateStats();
+            this.renderBookshelfOverview();
+            this.markDirty();
+            this.closeBulkEditModal();
+            alert(`保存しました（追加: ${added} / 更新: ${updated} / 削除: ${deleted}）`);
+        } catch (error) {
+            console.error('一括編集保存エラー:', error);
+            alert(`保存に失敗しました: ${error.message}`);
+        }
+    }
+
+    removeUserDataForBook(asin) {
+        if (this.userData.notes?.[asin]) delete this.userData.notes[asin];
+        if (this.userData.bookshelves) {
+            this.userData.bookshelves.forEach(bookshelf => {
+                if (bookshelf.books) bookshelf.books = bookshelf.books.filter(id => id !== asin);
+            });
+        }
+        if (this.userData.bookOrder) {
+            Object.keys(this.userData.bookOrder).forEach(key => {
+                this.userData.bookOrder[key] = this.userData.bookOrder[key].filter(id => id !== asin);
+            });
+        }
+        this.selectedBooks.delete(asin);
     }
 
 
